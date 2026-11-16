@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Explore plans, elevations, and orthogonal projections with interactive 3D solids, guided notes, drawing practice, and a chapter quiz.">
+<meta name="theme-color" content="#e6f4ff">
+<title>Plans and Elevations | Interactive Maths Learning</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: a drafting sheet. Squared paper ground, one centred column, sticky tab bar, drawings sit on grid panels. */
+:root{
+  --paper:#f2f5f9; --sheet:#ffffff; --ink:#132a4f; --ink-soft:#4b5f80; --rule:#cdd7e5; --grid:#dde5ef;
+  --accent:#c2410c; --accent-soft:#fdeadd; --blue:#1d4ed8; --blue-soft:#e4ecfd;
+  --good:#15803d; --good-bg:#e3f4e8; --bad:#b91c1c; --bad-bg:#fbe6e6;
+  --face-top:#eef3fa; --face-front:#d6e1f1; --face-side:#b7c8e2; --view-fill:#edf2fa;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#0c1626; --sheet:#132239; --ink:#e3ecf8; --ink-soft:#9db0cc; --rule:#2a3d5c; --grid:#1b2d49;
+  --accent:#fb923c; --accent-soft:#3a2413; --blue:#7aa7ff; --blue-soft:#1b2f57;
+  --good:#4ade80; --good-bg:#12301f; --bad:#f87171; --bad-bg:#3a1717;
+  --face-top:#2e4670; --face-front:#223656; --face-side:#172641; --view-fill:#1b2e4c; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --paper:#0c1626; --sheet:#132239; --ink:#e3ecf8; --ink-soft:#9db0cc; --rule:#2a3d5c; --grid:#1b2d49;
+  --accent:#fb923c; --accent-soft:#3a2413; --blue:#7aa7ff; --blue-soft:#1b2f57;
+  --good:#4ade80; --good-bg:#12301f; --bad:#f87171; --bad-bg:#3a1717;
+  --face-top:#2e4670; --face-front:#223656; --face-side:#172641; --view-fill:#1b2e4c; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:16px/1.6 var(--body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+.eyebrow{font:600 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+header.top .wrap{padding-block:28px 18px;display:flex;flex-direction:column;gap:8px}
+h1{font-size:clamp(30px,6vw,46px);font-weight:700;letter-spacing:-.02em}
+.lede{color:var(--ink-soft);max-width:60ch}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--paper);border-block:1.5px solid var(--ink)}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+nav.tabs a{font:600 15px var(--display);color:var(--ink-soft);text-decoration:none;padding:12px 14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+main .wrap{padding-block:26px 64px}
+.view{display:flex;flex-direction:column;gap:22px}
+.sheet{background:var(--sheet);border:1.5px solid var(--rule);border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sheet h2{font-size:23px}
+.sheet h3{font-size:17px}
+.sec-no{font:600 12px var(--mono);color:var(--ink-soft);letter-spacing:.08em}
+.prose{max-width:65ch;display:flex;flex-direction:column;gap:12px}
+.prose ul,.prose ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.key-idea{border:1.5px dashed var(--accent);background:var(--accent-soft);padding:12px 14px;border-radius:4px;max-width:65ch}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;align-items:start}
+.two>*{min-width:0}
+figure{margin:0;display:flex;flex-direction:column;gap:6px;align-items:center}
+figcaption{font-size:13px;color:var(--ink-soft);text-align:center}
+svg.dwg{display:block;max-width:100%;height:auto}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px;display:flex;justify-content:center;align-items:center;max-width:100%}
+.gl{stroke:var(--grid);stroke-width:1}
+.edge{stroke:var(--ink);stroke-width:2.2;fill:var(--view-fill);stroke-linejoin:round;stroke-linecap:round}
+line.edge{fill:none}
+.hid{stroke-dasharray:6 4;stroke-width:1.8}
+.cl{stroke:var(--accent);stroke-width:1;fill:none;opacity:.85}
+.c45{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:2 3;fill:none}
+.f-top,.f-front,.f-side{stroke:var(--ink);stroke-width:1.7;stroke-linejoin:round}
+.f-top{fill:var(--face-top)} .f-front{fill:var(--face-front)} .f-side{fill:var(--face-side)}
+.arw{stroke:var(--accent);stroke-width:1.8;fill:none} .arwh{fill:var(--accent)}
+.lbl{font:600 10px var(--mono);fill:var(--accent);letter-spacing:.06em}
+.vlbl{font:600 10px var(--mono);fill:var(--ink-soft);letter-spacing:.04em}
+.svgtxt{font:500 12px var(--body);fill:var(--ink)}
+.picker,.seg{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 14px var(--body);padding:7px 13px;border-radius:999px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn{font:600 15px var(--body);padding:9px 16px;border-radius:5px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink-soft);cursor:pointer}
+.check input{width:17px;height:17px;accent-color:var(--good)}
+.got{border-top:1px solid var(--rule);padding-top:12px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.scroll{overflow-x:auto}
+.ltype{display:grid;grid-template-columns:90px 1fr;gap:6px 14px;align-items:center;max-width:65ch}
+.ltype svg{width:90px;height:14px}
+.qtext{font-size:17px;font-weight:500;max-width:65ch}
+.qfig{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.opts{display:grid;gap:8px}
+.opts.vis{grid-template-columns:repeat(2,minmax(0,1fr));max-width:420px}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;font:15px/1.4 var(--body);color:var(--ink);background:var(--sheet);border:1.5px solid var(--rule);border-radius:5px;padding:10px 12px;cursor:pointer;min-width:0}
+.opts.vis .opt{flex-direction:column;align-items:flex-start;padding:8px}
+.opt .key{font:600 12px var(--mono);border:1.5px solid currentColor;border-radius:3px;padding:1px 6px;flex:none}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.sel{border-color:var(--blue);background:var(--blue-soft)}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.fb{padding:11px 14px;border-radius:4px;border:1.5px solid var(--rule);max-width:65ch}
+.fb.ok{border-color:var(--good);background:var(--good-bg)} .fb.no{border-color:var(--bad);background:var(--bad-bg)}
+.fb b{font-family:var(--display)}
+.numf{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.numf label{font-size:14px;color:var(--ink-soft)}
+input[type=text]{font:16px var(--body);color:var(--ink);background:var(--sheet);border:1.5px solid var(--rule);border-radius:5px;padding:8px 10px;max-width:100%}
+.numf input{width:110px}
+.meta{font:500 13px var(--mono);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.bar{height:8px;background:var(--grid);border-radius:99px;overflow:hidden;min-width:60px;flex:1}
+.bar i{display:block;height:100%;background:var(--accent)}
+#board svg{touch-action:manipulation;cursor:crosshair}
+.pt{fill:var(--ink-soft)} .hit{fill:transparent;cursor:pointer} .hit:hover{fill:var(--blue);fill-opacity:.2}
+.pend{fill:var(--accent)}
+.v3{display:flex;flex-direction:column;gap:6px;align-items:center;max-width:100%}
+.v3 canvas{width:240px;max-width:100%;height:auto;touch-action:none;cursor:grab;display:block}
+.v3 canvas:active{cursor:grabbing}
+.v3 .snap{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.v3 .snap button{font:600 12px var(--body);padding:4px 9px;border-radius:999px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.v3 .hint{font-size:12px;color:var(--ink-soft)}
+#q-host .v3 .snap{display:none}
+.bgrid{display:grid;grid-template-columns:repeat(4,52px);gap:4px}
+.bgrid button{height:52px;font:600 18px var(--mono);border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink);border-radius:4px;cursor:pointer}
+.bgrid button.on{background:var(--face-front);border-color:var(--ink)}
+.bviews{display:flex;flex-wrap:wrap;gap:14px}
+.cellf{fill:var(--view-fill);stroke:none}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{border:1.5px solid var(--rule);border-radius:5px;padding:14px;background:var(--sheet);display:flex;flex-direction:column;gap:2px}
+.tile b{font:700 30px var(--display);font-variant-numeric:tabular-nums}
+.tile span{font-size:13px;color:var(--ink-soft)}
+.big{font:700 clamp(40px,10vw,64px) var(--display);font-variant-numeric:tabular-nums;line-height:1}
+.review{display:flex;flex-direction:column;gap:14px}
+.review>div{border-top:1px solid var(--rule);padding-top:12px;display:flex;flex-direction:column;gap:6px}
+.tag{font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;align-self:flex-start}
+.tag.ok{background:var(--good-bg);color:var(--good)} .tag.no{background:var(--bad-bg);color:var(--bad)}
+.ans svg{width:84px;height:auto;vertical-align:middle}
+.muted{color:var(--ink-soft);font-size:14px}
+.gate .wrap{padding-block:40px 64px}
+.gate .sheet{max-width:480px;margin:0 auto;width:100%;gap:16px}
+.gate h1{font-size:clamp(28px,6vw,38px)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font:600 14px var(--body)}
+.field input{width:100%}
+.field small{font-size:13px;color:var(--ink-soft)}
+.gate .btn{align-self:flex-start}
+@media (prefers-reduced-motion:no-preference){.opt,.chip,.btn{transition:background .12s,border-color .12s}}
+</style>
+<style>
+/* Layout: a toy-block world. Dotted sky ground, chunky extruded cards and buttons you can press, and a spinning cube labelled PLAN / FRONT / SIDE as the mark. */
+:root{
+  --paper:#e6f4ff; --sheet:#ffffff; --ink:#2b1a5e; --ink-soft:#5a4c8c; --rule:#cfc6f2; --grid:#c6e0f8;
+  --accent:#d81f68; --accent-soft:#ffe3ee; --blue:#2f5bff; --blue-soft:#e2e9ff;
+  --good:#0f7f58; --good-bg:#dcf7ea; --bad:#c81e3a; --bad-bg:#ffe1e4;
+  --face-top:#ffd84d; --face-front:#ffb92e; --face-side:#f08a1d; --view-fill:#fff3c4;
+  --edge:#2b1a5e; --yellow:#ffcf33; --pink:#ff6aa6; --sky:#5c9bff; --mint:#2fd9ac; --grape:#a57bff; --on-bright:#2b1a5e;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#170f3d; --sheet:#241a57; --ink:#f4f0ff; --ink-soft:#b9aee6; --rule:#43357f; --grid:#261b63;
+  --accent:#ff7fb0; --accent-soft:#4a1f45; --blue:#9db6ff; --blue-soft:#2a2f78;
+  --good:#4be3a8; --good-bg:#123f3a; --bad:#ff8a98; --bad-bg:#4a1a33;
+  --view-fill:#3a2f7a; --edge:#0a0524; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --paper:#170f3d; --sheet:#241a57; --ink:#f4f0ff; --ink-soft:#b9aee6; --rule:#43357f; --grid:#261b63;
+  --accent:#ff7fb0; --accent-soft:#4a1f45; --blue:#9db6ff; --blue-soft:#2a2f78;
+  --good:#4be3a8; --good-bg:#123f3a; --bad:#ff8a98; --bad-bg:#4a1a33;
+  --view-fill:#3a2f7a; --edge:#0a0524; color-scheme:dark }
+body{font:17px/1.6 var(--body);background-image:radial-gradient(var(--grid) 2.5px,transparent 3px);background-size:26px 26px}
+h1,h2,h3{font-weight:800}
+.eyebrow{align-self:flex-start;background:var(--mint);color:var(--on-bright);border:2.5px solid var(--edge);border-radius:999px;padding:3px 12px;box-shadow:0 3px 0 var(--edge)}
+header.top .wrap{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-block:30px 22px}
+.hero-txt{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:10px}
+h1{font-size:clamp(38px,9vw,70px);font-weight:800;line-height:1.02;text-shadow:3px 3px 0 var(--yellow),6px 6px 0 var(--pink)}
+.lede{font-weight:600}
+#who:not(:empty){align-self:flex-start;background:var(--yellow);color:var(--on-bright);border:2.5px solid var(--edge);border-radius:999px;padding:3px 12px;font-weight:600}
+/* the cube */
+.scene{--s:118px;width:var(--s);height:var(--s);perspective:800px;margin:30px 40px;flex:none}
+.cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;transform:rotateX(-24deg) rotateY(-38deg)}
+.cube i{position:absolute;inset:0;display:grid;place-items:center;font:600 13px var(--mono);font-style:normal;letter-spacing:.08em;color:var(--on-bright);border:3px solid var(--edge);border-radius:12px;backface-visibility:hidden}
+.c-front{background:var(--pink);transform:translateZ(calc(var(--s)/2))}
+.c-back{background:var(--grape);transform:rotateY(180deg) translateZ(calc(var(--s)/2))}
+.c-right{background:var(--sky);transform:rotateY(90deg) translateZ(calc(var(--s)/2))}
+.c-left{background:var(--mint);transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}
+.c-top{background:var(--yellow);transform:rotateX(90deg) translateZ(calc(var(--s)/2))}
+.c-bottom{background:var(--grape);transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}
+@keyframes spin{from{transform:rotateX(-24deg) rotateY(-38deg)}to{transform:rotateX(-24deg) rotateY(322deg)}}
+@keyframes bob{50%{transform:translateY(-10px)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(600deg)}}
+@media (prefers-reduced-motion:no-preference){.cube{animation:spin 16s linear infinite}.scene{animation:bob 4s ease-in-out infinite}}
+/* tabs as pressable pills */
+nav.tabs{border-block:0}
+nav.tabs .wrap{gap:10px;padding-block:10px 14px}
+nav.tabs a{font:700 16px var(--display);color:var(--ink);background:var(--sheet);padding:6px 18px;border:2.5px solid var(--edge);border-radius:999px;box-shadow:0 4px 0 var(--edge)}
+nav.tabs a[aria-current="page"]{background:var(--yellow);color:var(--on-bright);border-color:var(--edge);transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+/* blocks */
+.view{gap:30px}
+.sheet{border:3px solid var(--edge);border-radius:22px;box-shadow:0 8px 0 var(--edge);padding:24px}
+.sheet h2{font-size:27px}.sheet h3{font-size:20px}
+.sec-no{align-self:flex-start;color:var(--on-bright);background:var(--yellow);border:2px solid var(--edge);border-radius:999px;padding:2px 10px}
+article:nth-child(4n+2) .sec-no{background:var(--pink)}article:nth-child(4n+3) .sec-no{background:var(--mint)}article:nth-child(4n) .sec-no{background:var(--sky)}
+.panel{border:2.5px dashed var(--rule);border-radius:16px}
+.key-idea{border:2.5px dashed var(--accent);border-radius:16px;font-weight:600}
+.btn{font:700 17px var(--display);background:var(--yellow);color:var(--on-bright);border:3px solid var(--edge);border-radius:14px;padding:8px 20px;box-shadow:0 5px 0 var(--edge)}
+.btn.ghost{background:var(--sheet);color:var(--ink)}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.chip,.v3 .snap button{font-weight:700;border:2.5px solid var(--edge);box-shadow:0 3px 0 var(--edge)}
+.chip[aria-pressed="true"]{background:var(--pink);color:var(--on-bright);border-color:var(--edge);transform:translateY(2px);box-shadow:0 1px 0 var(--edge)}
+.v3 .snap button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--edge)}
+.opt{border:2.5px solid var(--edge);border-radius:14px;box-shadow:0 4px 0 var(--edge);font-weight:600}
+.opt .key{background:var(--yellow);color:var(--on-bright);border-color:var(--edge);border-radius:6px}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.fb{border-width:2.5px;border-radius:14px}
+input[type=text]{border:2.5px solid var(--edge);border-radius:12px}
+.bgrid button{border:2.5px solid var(--edge);border-radius:10px;box-shadow:0 3px 0 var(--edge)}
+.bgrid button.on{background:var(--yellow);color:var(--on-bright)}
+.bar{height:14px;border:2px solid var(--edge);background:var(--sheet)}
+.bar i{background:var(--pink)}
+.tile{border:3px solid var(--edge);border-radius:16px;box-shadow:0 5px 0 var(--edge);background:var(--yellow);color:var(--on-bright)}
+.tile:nth-child(4n+2){background:var(--pink)}.tile:nth-child(4n+3){background:var(--mint)}.tile:nth-child(4n){background:var(--sky)}
+.tile span{color:var(--on-bright);font-weight:700}
+.big{text-shadow:3px 3px 0 var(--yellow),6px 6px 0 var(--pink)}
+.tag{border-radius:999px;padding:3px 10px}
+.gate .scene{--s:84px;margin:22px auto 14px}
+.gate .sheet{padding:26px}
+details.polya{border:2.5px solid var(--edge);border-radius:16px;box-shadow:0 4px 0 var(--edge);padding:12px 16px;background:var(--sheet)}
+details.polya summary{font:700 18px var(--display);cursor:pointer}
+details.polya[open] summary{margin-bottom:10px}
+.pstep{display:inline-block;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--yellow);color:var(--on-bright);border:2px solid var(--edge);border-radius:999px;padding:2px 10px;margin-right:6px;vertical-align:middle}
+details.polya:nth-of-type(2) .pstep{background:var(--pink)}details.polya:nth-of-type(3) .pstep{background:var(--mint)}details.polya:nth-of-type(4) .pstep{background:var(--sky)}
+input[type=range]{accent-color:var(--accent);flex:1;min-width:160px;max-width:320px}
+#rb-cap{max-width:none}
+.pen{stroke-width:1.4;stroke:var(--ink-soft)}
+.tdraw{stroke-dasharray:1;stroke-dashoffset:0}
+@keyframes tdraw{from{stroke-dashoffset:1;fill-opacity:0}}
+@keyframes tfade{from{opacity:0}}
+@media (prefers-reduced-motion:no-preference){.tdraw{animation:tdraw 1s ease both}.tfade{animation:tfade .7s ease both}}
+#tut-cap{max-width:none}
+.party{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.party i{position:absolute;top:-24px;width:13px;height:13px;border:2px solid var(--edge);border-radius:3px;animation:fall linear forwards}
+</style>
+
+<section class="gate" id="gate" aria-labelledby="g-title"><div class="wrap">
+  <form class="sheet" id="g-form" novalidate>
+    <div class="scene" aria-hidden="true"><div class="cube"><i class="c-front">FRONT</i><i class="c-back"></i><i class="c-right">SIDE</i><i class="c-left"></i><i class="c-top">PLAN</i><i class="c-bottom"></i></div></div>
+    <span class="eyebrow">Mathematics Form 3 · Chapter 7</span>
+    <h1 id="g-title">Plans and Elevations</h1>
+    <p class="lede">Ready to see shapes from every side? First, tell us your name and your class.</p>
+    <div class="field"><label for="g-name">Your name</label><input type="text" id="g-name" autocomplete="off" maxlength="60" placeholder="Full name"></div>
+    <div class="field"><label for="g-class">Your class</label><input type="text" id="g-class" autocomplete="off" maxlength="30" placeholder="Example: 3 Amanah"></div>
+    <div class="fb no" id="g-err" role="alert" hidden></div>
+    <button type="submit" class="btn">Let's go!</button>
+  </form>
+</div></section>
+
+<header class="top" hidden><div class="wrap">
+  <div class="hero-txt">
+  <span class="eyebrow">Mathematics Form 3 · Chapter 7</span>
+  <h1>Plans and Elevations</h1>
+  <p class="lede">Spin the solids, build with cubes, then beat the quiz. Your scores are kept on the Score page.</p>
+  <p class="meta" id="who"></p>
+  </div>
+  <div class="scene" aria-hidden="true"><div class="cube"><i class="c-front">FRONT</i><i class="c-back"></i><i class="c-right">SIDE</i><i class="c-left"></i><i class="c-top">PLAN</i><i class="c-bottom"></i></div></div>
+</div></header>
+
+<nav class="tabs" aria-label="Sections" hidden><div class="wrap">
+  <a href="#notes" data-tab="notes">Notes</a>
+  <a href="#practice" data-tab="practice">Practice</a>
+  <a href="#quiz" data-tab="quiz">Quiz</a>
+  <a href="#score" data-tab="score">Score</a>
+</div></nav>
+
+<main hidden><div class="wrap">
+
+<!-- NOTES -->
+<section class="view" id="v-notes">
+
+  <article class="sheet">
+    <span class="sec-no">7.1 · ORTHOGONAL PROJECTIONS</span>
+    <h2>What an orthogonal projection is</h2>
+    <div class="two">
+      <div class="prose">
+        <p>An <b>orthogonal projection</b> is the image of an object on a flat plane, made by lines that leave the object and meet the plane at <b>90°</b>. A line that meets a plane at 90° is called a <b>normal</b> to the plane.</p>
+        <p>Think of the sun directly overhead. The shadow on the ground is the orthogonal projection of the object on the horizontal plane.</p>
+        <p class="key-idea">Every point of the object moves straight to the plane along a normal. Nothing is tilted and nothing is drawn in perspective.</p>
+      </div>
+      <figure>
+        <div class="panel"><svg class="dwg" viewBox="0 0 320 190" width="320" height="190" role="img" aria-label="Line AB above a plane and its shorter projection A prime B prime">
+          <polygon points="24,160 246,160 300,112 78,112" fill="var(--view-fill)" stroke="var(--ink)" stroke-width="1.5"/>
+          <line class="cl" x1="110" y1="62" x2="110" y2="142"/><line class="cl" x1="220" y1="24" x2="220" y2="128"/>
+          <polyline class="cl" points="110,134 118,133 118,141"/><polyline class="cl" points="220,120 228,119 228,127"/>
+          <line x1="110" y1="62" x2="220" y2="24" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <line x1="110" y1="142" x2="220" y2="128" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+          <text class="svgtxt" x="96" y="60">A</text><text class="svgtxt" x="226" y="22">B</text>
+          <text class="svgtxt" x="92" y="152">A′</text><text class="svgtxt" x="226" y="138">B′</text>
+          <text class="vlbl" x="36" y="176">HORIZONTAL PLANE</text>
+          <text class="lbl" x="124" y="100">normals (90°)</text>
+        </svg></div>
+        <figcaption>AB is tilted, so its projection A′B′ is shorter than AB.</figcaption>
+      </figure>
+    </div>
+    <label class="check got"><input type="checkbox" id="rd-s1" data-read="s1"> I understand this part</label>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.1 · ORTHOGONAL PROJECTIONS</span>
+    <h2>What stays the same and what changes</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Edge or face of the object</th><th>How it looks in the projection</th></tr></thead>
+      <tbody>
+        <tr><td><b>Parallel</b> to the plane</td><td>True length. A face keeps its true shape, size and angles.</td></tr>
+        <tr><td><b>Inclined</b> (tilted) to the plane</td><td>Shorter than the true length. Angles on the face change.</td></tr>
+        <tr><td><b>Perpendicular</b> to the plane</td><td>An edge becomes a point. A face becomes a straight line.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="prose">Example: a ramp has a sloping edge of 5 cm that rises 3 cm over a horizontal distance of 4 cm. Seen from the top, the sloping edge is drawn 4 cm long, not 5 cm.</p>
+    <h3>Turn the ramp and see</h3>
+    <p class="muted">This ramp is 4 cm long, 3 cm wide and 3 cm high. Its sloping edge is 5 cm. Choose a case to turn the ramp to that view, or drag the ramp to rotate it yourself.</p>
+    <div class="picker" id="ss-pick" role="group" aria-label="Choose a case"></div>
+    <div class="two">
+      <figure><div class="panel"><div class="v3" data-solid="ramp4" id="ss-3d"></div></div><figcaption>The ramp in 3D</figcaption></figure>
+      <div class="fb" id="ss-cap" aria-live="polite"></div>
+    </div>
+    <label class="check got"><input type="checkbox" id="rd-s2" data-read="s2"> I understand this part</label>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.2 · PLANS AND ELEVATIONS</span>
+    <h2>Plan, front elevation and side elevation</h2>
+    <div class="prose">
+      <ul>
+        <li><b>Plan</b>: the orthogonal projection on a <b>horizontal</b> plane. You look at the solid from the <b>top</b>.</li>
+        <li><b>Front elevation</b>: the projection on a <b>vertical</b> plane, looking from the <b>front</b>.</li>
+        <li><b>Side elevation</b>: the projection on a <b>vertical</b> plane, looking from the <b>side</b>.</li>
+      </ul>
+      <p>Pick a solid below and compare it with its three views. Each grid square is 1 cm.</p>
+    </div>
+    <div class="picker" id="ex-pick" role="group" aria-label="Choose a solid"></div>
+    <div class="two">
+      <figure><div class="panel" id="ex-iso"></div><figcaption>The solid in 3D. Drag it to turn it, or use the buttons to look from the top, front or side.</figcaption></figure>
+      <figure><div class="panel" id="ex-lay"></div><figcaption>Its three views. Here the side elevation is the view from the right, drawn to the left of the front elevation.</figcaption></figure>
+    </div>
+    <label class="check"><input type="checkbox" id="ex-proj" checked> Show projection lines and the 45° line</label>
+    <p class="key-idea" id="ex-note"></p>
+    <label class="check got"><input type="checkbox" id="rd-s3" data-read="s3"> I understand this part</label>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.2 · ACTIVITY</span>
+    <h2>Build a solid and watch its views</h2>
+    <p class="prose">Tap a square to stack a cube on it. The number shows how many cubes stand on that square. The plan and both elevations update as you build. Drag the solid to turn it.</p>
+    <div class="row">
+      <button type="button" class="chip" id="b-add" aria-pressed="true">Add cube</button>
+      <button type="button" class="chip" id="b-rem" aria-pressed="false">Remove cube</button>
+      <button type="button" class="btn ghost" id="b-clear">Clear all</button>
+      <span class="meta" id="b-count"></span>
+    </div>
+    <div class="two">
+      <figure><div class="bgrid" id="b-grid"></div><figcaption>The base seen from the top. The bottom row is the front. Up to 4 cubes per square.</figcaption></figure>
+      <figure><div class="panel"><div class="v3" data-solid="build" id="b-3d"></div></div><figcaption>Your solid</figcaption></figure>
+    </div>
+    <div class="bviews" id="b-views"></div>
+    <p class="muted">This activity draws visible edges only. Hidden edges (dashed lines) are not shown.</p>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.2 · PLANS AND ELEVATIONS</span>
+    <h2>The three types of line</h2>
+    <div class="ltype">
+      <svg viewBox="0 0 90 14" aria-hidden="true"><line x1="2" y1="7" x2="88" y2="7" stroke="var(--ink)" stroke-width="3"/></svg><p><b>Thick solid line</b>: an edge you can see.</p>
+      <svg viewBox="0 0 90 14" aria-hidden="true"><line x1="2" y1="7" x2="88" y2="7" stroke="var(--ink)" stroke-width="2" stroke-dasharray="7 5"/></svg><p><b>Dashed line</b>: an edge that is hidden behind another part of the solid.</p>
+      <svg viewBox="0 0 90 14" aria-hidden="true"><line x1="2" y1="7" x2="88" y2="7" stroke="var(--accent)" stroke-width="1"/></svg><p><b>Thin solid line</b>: a construction (projection) line. Leave these on your drawing.</p>
+    </div>
+    <p class="prose">In the explorer above, choose <b>Grooved block</b>. From the right, the floor of the groove is behind a wall, so the side elevation shows it as a dashed line.</p>
+    <label class="check got"><input type="checkbox" id="rd-s4" data-read="s4"> I understand this part</label>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.2 · PLANS AND ELEVATIONS</span>
+    <h2>How to draw the three views to full scale</h2>
+    <div class="prose"><ol>
+      <li>Draw the <b>front elevation</b> first, using the true length and height.</li>
+      <li>Draw thin projection lines straight down from every corner of the front elevation.</li>
+      <li>Leave a gap and draw the <b>plan</b> directly below, using the true width (depth) of the solid.</li>
+      <li>Draw a <b>45° line</b> in the corner next to the plan.</li>
+      <li>Project the plan across to the 45° line, then turn and project upwards. Project the heights across from the front elevation. The <b>side elevation</b> sits where these lines cross.</li>
+      <li>Go over visible edges with thick solid lines and hidden edges with dashed lines.</li>
+      <li>Label the vertices and write the lengths.</li>
+    </ol>
+    <p class="key-idea">The plan and front elevation share the <b>length</b>. The front and side elevations share the <b>height</b>. The plan and side elevation share the <b>width</b>, and the 45° line carries it across.</p></div>
+    <h3>Watch it being drawn</h3>
+    <p class="muted">Press Play to watch the drawing appear one step at a time, like a video. Use Next and Back to go at your own speed, and turn the solid to compare it with the drawing.</p>
+    <div class="picker" id="tut-pick" role="group" aria-label="Choose a solid to draw"></div>
+    <div class="two">
+      <figure><div class="panel" id="tut-iso"></div><figcaption>The solid. Drag it, or press Top, Front and Side.</figcaption></figure>
+      <figure><div class="panel" id="tut-dwg"></div><figcaption>The drawing. 1 square = 1 cm.</figcaption></figure>
+    </div>
+    <div class="fb" id="tut-cap" aria-live="polite"></div>
+    <div class="row">
+      <button type="button" class="btn ghost" id="tut-back">Back</button>
+      <button type="button" class="btn" id="tut-play">Play</button>
+      <button type="button" class="btn ghost" id="tut-next">Next</button>
+      <span class="meta" id="tut-n"></span>
+    </div>
+    <div class="row"><a class="btn ghost" href="#practice" id="tut-try" style="text-decoration:none">Now draw it yourself</a><span class="muted">Opens the drawing board in Practice.</span></div>
+    <label class="check got"><input type="checkbox" id="rd-s5" data-read="s5"> I understand this part</label>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.2 · PLANS AND ELEVATIONS</span>
+    <h2>Reading the views back into a solid</h2>
+    <div class="prose">
+      <p>You can rebuild a solid from its views because each view gives two of the three measurements.</p>
+      <ul>
+        <li>Plan: length and width.</li>
+        <li>Front elevation: length and height.</li>
+        <li>Side elevation: width and height.</li>
+      </ul>
+      <p>For a prism, the view that shows the cross-section gives the area, and another view gives how far it extends. <b>Volume = area of cross-section × length of prism.</b></p>
+      <p>Example: the front elevation of the L-shaped block is an L with area 6 × 2 + 2 × 3 = 18 cm². The plan shows it is 4 cm deep. Volume = 18 × 4 = 72 cm³.</p>
+    </div>
+    <h3>See it in 3D</h3>
+    <p class="muted">The front elevation gives the shape. The plan tells you how far the shape goes back. Drag the slider to push the front elevation back and build the solid from its views.</p>
+    <div class="picker" id="rb-pick" role="group" aria-label="Choose a set of views"></div>
+    <div class="two">
+      <figure><div class="panel" id="rb-lay"></div><figcaption>The three views you are given. 1 square = 1 cm.</figcaption></figure>
+      <figure><div class="panel" id="rb-host"></div><figcaption>The solid you build. Drag it to turn it.</figcaption></figure>
+    </div>
+    <div class="row"><label for="rb-d">Push the front elevation back</label><input type="range" id="rb-d" min="0" max="4" step="0.5" value="4"><span class="meta" id="rb-dv"></span></div>
+    <div class="fb" id="rb-cap" aria-live="polite"></div>
+    <label class="check got"><input type="checkbox" id="rd-s6" data-read="s6"> I understand this part</label>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">7.2 · PROBLEM SOLVING</span>
+    <h2>Challenge: the skate park model</h2>
+    <div class="prose">
+      <p>Aina makes a clay model of a skate park. The model has three parts joined together: a <b>base</b> (cuboid), a <b>tower</b> (cuboid) and a <b>ramp</b> (right-angled triangular prism).</p>
+      <p>Turn the 3D model and study its three views. Each square is 1 cm.</p>
+      <ol type="a">
+        <li>Find the true length of the sloping edge of the ramp. How long is this edge when it is drawn in the plan?</li>
+        <li>Find the volume of clay in the model.</li>
+      </ol>
+    </div>
+    <div class="two">
+      <figure><div class="panel"><div class="v3" data-solid="park" id="pp-3d"></div></div><figcaption>The model in 3D. Drag it, or press Top, Front and Side.</figcaption></figure>
+      <figure><div class="panel" id="pp-lay"></div><figcaption>Its three views. The dashed line is a hidden edge.</figcaption></figure>
+    </div>
+    <form class="numf" id="pp-form"><label for="pp-in">Try it first. Volume of clay:</label><input type="text" id="pp-in" inputmode="decimal" autocomplete="off"><span>cm³</span><button class="btn" type="submit">Check</button></form>
+    <div class="fb" id="pp-fb" hidden></div>
+    <h3>Solve it with Polya's four steps</h3>
+    <p class="muted">Open one step at a time. Try each step yourself before you open it.</p>
+    <details class="polya"><summary><span class="pstep">Step 1</span> Understand the problem</summary><div class="prose">
+      <p><b>What is given?</b></p>
+      <ul>
+        <li>Base: 8 cm long, 6 cm wide, 2 cm high (front elevation and plan).</li>
+        <li>Tower: 4 cm long and 4 cm high (front elevation), 4 cm wide (plan). It stands on the base at the back left.</li>
+        <li>Ramp: its triangular face has a base of 4 cm and a height of 3 cm (front elevation). The ramp is 6 cm wide (plan).</li>
+      </ul>
+      <p><b>What must we find?</b> (a) The true length of the sloping edge and its length in the plan. (b) The total volume of the model.</p>
+    </div></details>
+    <details class="polya"><summary><span class="pstep">Step 2</span> Devise a plan</summary><div class="prose">
+      <ul>
+        <li>Split the model into three simple solids: base, tower and ramp.</li>
+        <li>Read each length from a view where it is parallel to the plane, so it shows its true length. The front elevation shows the triangle of the ramp in its true shape.</li>
+        <li>For (a), use Pythagoras' theorem on the triangle. In the plan, a tilted edge shows only its horizontal distance.</li>
+        <li>For (b), use volume = area of cross-section × length for each part, then add the three volumes.</li>
+      </ul>
+    </div></details>
+    <details class="polya"><summary><span class="pstep">Step 3</span> Carry out the plan</summary><div class="prose">
+      <p><b>(a)</b> True length of the sloping edge = √(4² + 3²) = √25 = <b>5 cm</b>. In the plan the edge is tilted, so it is drawn as its horizontal distance: <b>4 cm</b>.</p>
+      <p><b>(b)</b></p>
+      <ul>
+        <li>Base = 8 × 6 × 2 = 96 cm³</li>
+        <li>Tower = 4 × 4 × 4 = 64 cm³</li>
+        <li>Ramp = ½ × 4 × 3 × 6 = 36 cm³</li>
+      </ul>
+      <p>Total volume = 96 + 64 + 36 = <b>196 cm³</b></p>
+    </div></details>
+    <details class="polya"><summary><span class="pstep">Step 4</span> Look back</summary><div class="prose">
+      <ul>
+        <li>A box that just fits around the model is 8 × 6 × 6 = 288 cm³. Our answer, 196 cm³, is smaller. That makes sense because parts of the box are empty.</li>
+        <li>The plan length (4 cm) is shorter than the true length (5 cm). This agrees with the rule for a tilted edge.</li>
+        <li>The heights agree: base 2 cm + tower 4 cm = 6 cm, the full height of the front elevation.</li>
+        <li>The answer is a volume, so the unit is cm³.</li>
+      </ul>
+    </div></details>
+  </article>
+
+  <article class="sheet">
+    <span class="sec-no">REVISION</span>
+    <h2>Mistakes that cost marks, and key terms</h2>
+    <div class="prose"><ul>
+      <li>Drawing a sloping edge with its true length in a view where it should be shorter.</li>
+      <li>Using a solid line for a hidden edge, or leaving the hidden edge out.</li>
+      <li>Forgetting an edge inside the outline, such as the top of a step.</li>
+      <li>Views that do not line up: the plan must sit exactly below the front elevation.</li>
+      <li>Rubbing out the construction lines.</li>
+    </ul></div>
+    <div class="scroll"><table>
+      <thead><tr><th>English</th><th>Bahasa Melayu</th></tr></thead>
+      <tbody>
+        <tr><td>Orthogonal projection</td><td>Unjuran ortogon</td></tr>
+        <tr><td>Plan</td><td>Pelan</td></tr>
+        <tr><td>Front elevation</td><td>Dongakan depan</td></tr>
+        <tr><td>Side elevation</td><td>Dongakan sisi</td></tr>
+        <tr><td>Solid line / dashed line</td><td>Garis padu / garis sempang</td></tr>
+      </tbody>
+    </table></div>
+    <label class="check got"><input type="checkbox" id="rd-s7" data-read="s7"> I understand this part</label>
+  </article>
+</section>
+
+<!-- PRACTICE -->
+<section class="view" id="v-practice" hidden>
+  <article class="sheet">
+    <h2>Practice</h2>
+    <p class="muted">No timer. You get the answer and the reason straight away.</p>
+    <div class="seg" id="p-sets" role="group" aria-label="Practice type">
+      <button type="button" class="chip" data-set="concept">Key ideas</button>
+      <button type="button" class="chip" data-set="views">Read the views</button>
+      <button type="button" class="chip" data-set="draw">Drawing board</button>
+      <button type="button" class="chip" data-set="polya">Problem solving</button>
+    </div>
+    <p class="meta" id="p-meta"></p>
+    <div id="p-q" class="view" style="gap:14px"></div>
+    <div id="p-draw" class="view" style="gap:14px" hidden>
+      <p class="qtext" id="d-prompt"></p>
+      <div class="two">
+        <figure><div class="panel" id="d-iso"></div><figcaption>Each unit on the solid is 1 cm.</figcaption></figure>
+        <figure><div class="panel" id="board"></div><figcaption>Tap one dot, then another, to draw a line. 1 square = 1 cm.</figcaption></figure>
+      </div>
+      <div class="row">
+        <button type="button" class="chip" id="d-solid" aria-pressed="true">Solid line</button>
+        <button type="button" class="chip" id="d-dash" aria-pressed="false">Dashed line</button>
+        <button type="button" class="btn ghost" id="d-undo">Undo</button>
+        <button type="button" class="btn ghost" id="d-clear">Clear</button>
+        <button type="button" class="btn" id="d-check">Check drawing</button>
+      </div>
+      <div class="fb" id="d-fb" hidden></div>
+    </div>
+    <div class="row"><button type="button" class="btn" id="p-next" hidden>Next question</button></div>
+  </article>
+</section>
+
+<!-- QUIZ -->
+<section class="view" id="v-quiz" hidden>
+  <article class="sheet" id="q-card"></article>
+</section>
+
+<!-- SCORE -->
+<section class="view" id="v-score" hidden>
+  <article class="sheet">
+    <h2>Score</h2>
+    <div class="row"><label for="stu-name" class="muted">Student name</label><input type="text" id="stu-name" placeholder="Type your name" autocomplete="off"><label for="stu-class" class="muted">Class</label><input type="text" id="stu-class" placeholder="Type your class" autocomplete="off"></div>
+    <div class="tiles" id="s-tiles"></div>
+    <div class="row"><button type="button" class="btn ghost" id="s-copy">Copy my results for Google Sheets</button><span class="muted" id="s-copy-msg"></span></div>
+    <input type="text" id="s-copy-out" readonly hidden aria-label="Results row">
+    <p class="muted">Scores are saved in this browser on this device only. The copy button puts one row on the clipboard: name, class, date, best quiz %, latest quiz mark, quizzes taken, practice correct, practice attempted, notes understood.</p>
+  </article>
+  <article class="sheet">
+    <h3>Practice accuracy</h3>
+    <div id="s-practice" class="view" style="gap:10px"></div>
+  </article>
+  <article class="sheet">
+    <h3>Quiz history</h3>
+    <div class="scroll" id="s-hist"></div>
+  </article>
+  <div class="row">
+    <button type="button" class="btn ghost" id="s-reset">Reset my progress</button>
+    <span id="s-confirm" hidden class="row"><span>Erase all scores?</span><button type="button" class="btn" id="s-yes">Yes, erase</button><button type="button" class="btn ghost" id="s-no">Cancel</button></span>
+  </div>
+</section>
+
+</div></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const uniq=a=>[...new Set(a)];
+
+/* ---------- storage ---------- */
+const KEY='pe-tutor-v1';
+const blank=()=>({name:'',cls:'',read:{},practice:{concept:{a:0,c:0},views:{a:0,c:0},draw:{a:0,c:0},polya:{a:0,c:0}},quizzes:[]});
+let store=blank();
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)store=Object.assign(blank(),s);}catch(e){}
+store.practice=Object.assign(blank().practice,store.practice||{});
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}};
+
+/* ---------- solids ---------- */
+const rect=(w,h)=>({t:'poly',pts:[[0,0],[w,0],[w,h],[0,h]]});
+const ln=(a,b,c,d,dash)=>({t:'line',p:[a,b,c,d],dash:!!dash});
+const SOLIDS=[
+ {id:'cuboid',name:'Cuboid',W:6,D:4,H:3,poly:[[0,0],[6,0],[6,3],[0,3]],
+  plan:{w:6,h:4,s:[rect(6,4)]},side:{w:4,h:3,s:[rect(4,3)]},
+  note:'Every face of a cuboid is parallel to one of the planes, so all three views show true lengths: 6 cm long, 4 cm wide, 3 cm high.'},
+ {id:'lblock',name:'L-shaped block',W:6,D:4,H:5,poly:[[0,0],[6,0],[6,2],[2,2],[2,5],[0,5]],
+  plan:{w:6,h:4,s:[rect(6,4),ln(2,0,2,4)]},side:{w:4,h:5,s:[rect(4,5),ln(0,2,4,2)]},
+  note:'The edge of the step can be seen from the top and from the right, so it is a solid line inside the plan and inside the side elevation.'},
+ {id:'roof',name:'Triangular prism',W:6,D:4,H:4,poly:[[0,0],[6,0],[3,4]],
+  plan:{w:6,h:4,s:[rect(6,4),ln(3,0,3,4)]},side:{w:4,h:4,s:[rect(4,4)]},
+  note:'Each sloping face is 5 cm long, but it is tilted, so in the plan it is only 3 cm wide. The line in the middle of the plan is the top edge.'},
+ {id:'groove',name:'Grooved block',W:6,D:4,H:4,poly:[[0,0],[6,0],[6,4],[4,4],[4,2],[2,2],[2,4],[0,4]],
+  plan:{w:6,h:4,s:[rect(6,4),ln(2,0,2,4),ln(4,0,4,4)]},side:{w:4,h:4,s:[rect(4,4),ln(0,2,4,2,1)]},
+  note:'From the right, the floor of the groove is hidden behind the wall, so the side elevation shows it as a dashed line.'},
+ {id:'cyl',name:'Cylinder',cyl:true,r:2,W:4,D:4,H:5,
+  front:{w:4,h:5,s:[rect(4,5)]},plan:{w:4,h:4,s:[{t:'circle',cx:2,cy:2,r:2}]},side:{w:4,h:5,s:[rect(4,5)]},
+  note:'The curved surface becomes a rectangle in both elevations. The plan is a circle with diameter 4 cm.'}
+];
+SOLIDS.forEach(s=>{if(!s.cyl)s.front={w:s.W,h:s.H,s:[{t:'poly',pts:s.poly}]};});
+const EXTRA=[
+ {id:'ramp8',name:'Ramp',W:8,D:4,H:6,poly:[[0,0],[8,0],[0,6]]},
+ {id:'ramp4',name:'Ramp',W:4,D:3,H:3,poly:[[0,0],[4,0],[0,3]]},
+ {id:'box853',name:'Cuboid',W:8,D:5,H:3,poly:[[0,0],[8,0],[8,3],[0,3]]},
+ {id:'cone',name:'Cone',kind:'cone',r:2,W:4,D:4,H:5},
+ {id:'pyr',name:'Square-based pyramid',kind:'pyr',W:4,D:4,H:5},
+ {id:'cylF',name:'Cylinder lying on its side',kind:'cylF',r:2,W:4,D:6,H:4}
+];
+const ALL={};[...SOLIDS,...EXTRA].forEach(s=>{ALL[s.id]=s;});
+const S=id=>ALL[id];
+const v3=s=>`<div class="v3" data-solid="${s.id}">${s.poly||s.cyl?isoSVG(s):`<p class="muted">${s.name}</p>`}</div>`;
+const VK=['plan','front','side'], VN={plan:'plan',front:'front elevation',side:'side elevation'}, VDIR={plan:'the top',front:'the front',side:'the right'};
+
+/* ---------- drawing helpers ---------- */
+function grid(cols,rows,u){let o='';for(let i=0;i<=cols;i++)o+=`<line class="gl" x1="${i*u}" y1="0" x2="${i*u}" y2="${rows*u}"/>`;for(let j=0;j<=rows;j++)o+=`<line class="gl" x1="0" y1="${j*u}" x2="${cols*u}" y2="${j*u}"/>`;return o;}
+function drawView(v,ox,oy,u){const X=x=>ox+x*u,Y=y=>oy+(v.h-y)*u;
+  return v.s.map(s=>s.t==='fill'?`<rect class="cellf" x="${X(s.p[0])}" y="${Y(s.p[1]+1)}" width="${u}" height="${u}"/>`:s.t==='poly'?`<polygon class="edge" points="${s.pts.map(p=>X(p[0])+','+Y(p[1])).join(' ')}"/>`
+    :s.t==='circle'?`<circle class="edge" cx="${X(s.cx)}" cy="${Y(s.cy)}" r="${s.r*u}"/>`
+    :`<line class="edge${s.dash?' hid':''}" x1="${X(s.p[0])}" y1="${Y(s.p[1])}" x2="${X(s.p[2])}" y2="${Y(s.p[3])}"/>`).join('');}
+function viewSVG(v,u=14,box){const bw=(box?box[0]:v.w)+2,bh=(box?box[1]:v.h)+2,ox=Math.floor((bw-v.w)/2)*u,oy=Math.floor((bh-v.h)/2)*u;
+  return `<svg class="dwg" viewBox="0 0 ${bw*u} ${bh*u}" width="${bw*u}" height="${bh*u}" role="img" aria-label="Drawing ${v.w} by ${v.h} squares">${grid(bw,bh,u)}${drawView(v,ox,oy,u)}</svg>`;}
+function isoSVG(s,arrows=true){
+  const u=16,P=(x,y,z)=>[(x+y)*.866,(x-y)*.5-z],{W,D,H}=s,pts=[];
+  let cx,cb,ct,rx,ry;
+  if(s.cyl){[cx,cb]=P(s.r,s.r,0);ct=cb-H;rx=1.2247*s.r;ry=.7071*s.r;pts.push([cx-rx,ct-ry],[cx+rx,cb+ry]);}
+  else s.poly.forEach(([x,z])=>pts.push(P(x,0,z),P(x,D,z)));
+  const ar=(arrows?[['FRONT',P(W/2,-3.2,H*.4),P(W/2,-.6,H*.4)],['SIDE',P(W+3.2,D/2,H*.4),P(W+.6,D/2,H*.4)],['PLAN',P(W/2,D/2,H+2.8),P(W/2,D/2,H+.5)]]:[]).map(([t,a,b])=>{
+    const l=Math.hypot(b[0]-a[0],b[1]-a[1]),d=[(b[0]-a[0])/l,(b[1]-a[1])/l],lp=[a[0]-d[0]*.7,a[1]-d[1]*.7];
+    pts.push([lp[0]-1.3,lp[1]-.5],[lp[0]+1.3,lp[1]+.5]);return {t,a,b,d,lp};});
+  const minX=Math.min(...pts.map(p=>p[0])),maxX=Math.max(...pts.map(p=>p[0])),minY=Math.min(...pts.map(p=>p[1])),maxY=Math.max(...pts.map(p=>p[1]));
+  const T=p=>[+((p[0]-minX+.5)*u).toFixed(1),+((p[1]-minY+.5)*u).toFixed(1)], pl=pp=>pp.map(p=>T(p).join(',')).join(' ');
+  let body='';
+  if(s.cyl){const a=T([cx-rx,ct]),b=T([cx+rx,cb]),m=T([cx,ct]);
+    body=`<path class="f-side" d="M${a[0]} ${a[1]}V${b[1]}A${rx*u} ${ry*u} 0 0 0 ${b[0]} ${b[1]}V${a[1]}Z"/><ellipse class="f-top" cx="${m[0]}" cy="${m[1]}" rx="${rx*u}" ry="${ry*u}"/>`;
+  }else{const n=s.poly.length,q=[];
+    for(let i=0;i<n;i++){const a=s.poly[i],b=s.poly[(i+1)%n],dx=b[0]-a[0],dz=b[1]-a[1];
+      if(dz-dx>0)q.push({d:(a[0]+b[0])/2-D/2+(a[1]+b[1])/2,c:Math.abs(dx)>Math.abs(dz)?'f-top':'f-side',p:[P(a[0],0,a[1]),P(b[0],0,b[1]),P(b[0],D,b[1]),P(a[0],D,a[1])]});}
+    q.sort((a,b)=>a.d-b.d).forEach(f=>body+=`<polygon class="${f.c}" points="${pl(f.p)}"/>`);
+    body+=`<polygon class="f-front" points="${pl(s.poly.map(([x,z])=>P(x,0,z)))}"/>`;}
+  ar.forEach(({t,a,b,d,lp})=>{const n=[-d[1],d[0]],A=T(a),B=T([b[0]-d[0]*.3,b[1]-d[1]*.3]),L=T(lp);
+    body+=`<line class="arw" x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}"/><polygon class="arwh" points="${pl([b,[b[0]-d[0]*.55+n[0]*.22,b[1]-d[1]*.55+n[1]*.22],[b[0]-d[0]*.55-n[0]*.22,b[1]-d[1]*.55-n[1]*.22]])}"/><text class="lbl" x="${L[0]}" y="${L[1]}" text-anchor="middle" dominant-baseline="middle">${t}</text>`;});
+  const w=Math.ceil((maxX-minX+1)*u),h=Math.ceil((maxY-minY+1)*u);
+  return `<svg class="dwg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="${s.name}: ${s.W} cm long, ${s.D} cm wide, ${s.H} cm high">${body}</svg>`;}
+function layoutSVG(s,proj){
+  const u=20,g=2,{W,D,H}=s,L=1,Tp=2,cols=L+D+g+W+1,rows=Tp+H+g+D+2,X=x=>(L+x)*u,Y=y=>(Tp+y)*u;
+  const cl=(a,b,c,d)=>`<line class="cl" x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`;
+  let o=grid(cols,rows,u);
+  if(proj){const xs=uniq(s.cyl?[0,W]:s.poly.map(p=>p[0])),zs=uniq(s.cyl?[0,H]:s.poly.map(p=>p[1]));
+    o+=`<line class="c45" x1="${X(D+g/2+.6)}" y1="${Y(H+g/2-.6)}" x2="${X(-.4)}" y2="${Y(H+g+D+.4)}"/>`;
+    xs.forEach(x=>o+=cl(X(D+g+x),Y(H),X(D+g+x),Y(H+g)));
+    zs.forEach(z=>o+=cl(X(D),Y(H-z),X(D+g),Y(H-z)));
+    [0,D].forEach(y=>{const yp=H+g+D-y;o+=cl(X(D+g),Y(yp),X(y),Y(yp))+cl(X(y),Y(yp),X(y),Y(H));});}
+  o+=drawView(s.side,X(0),Y(0),u)+drawView(s.front,X(D+g),Y(0),u)+drawView(s.plan,X(D+g),Y(H+g),u);
+  const tx=(t,x,y)=>`<text class="vlbl" x="${X(x)}" y="${Y(y)}" text-anchor="middle">${t}</text>`;
+  o+=tx('SIDE ELEVATION',D/2,-.6)+tx('FRONT ELEVATION',D+g+W/2,-.6)+tx('PLAN',D+g+W/2,H+g+D+.9);
+  return `<svg class="dwg" viewBox="0 0 ${cols*u} ${rows*u}" width="${cols*u}" height="${rows*u}" role="img" aria-label="Plan, front elevation and side elevation of the ${s.name}">${o}</svg>`;}
+
+/* ---------- explorer ---------- */
+let exId='lblock';
+function renderEx(){const s=S(exId);
+  $('#ex-pick').innerHTML=SOLIDS.map(x=>`<button type="button" class="chip" data-id="${x.id}" aria-pressed="${x.id===exId}">${x.name}</button>`).join('');
+  $('#ex-iso').innerHTML=v3(s);$('#ex-lay').innerHTML=layoutSVG(s,$('#ex-proj').checked);$('#ex-note').textContent=s.note;}
+$('#ex-pick').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b){exId=b.dataset.id;renderEx();}});
+$('#ex-proj').addEventListener('change',e=>{$('#ex-lay').innerHTML=layoutSVG(S(exId),e.target.checked);});
+
+/* ---------- question banks (o[0] is the correct option) ---------- */
+const CONCEPTS=[
+ {q:'An orthogonal projection is formed by lines from the object that meet the plane at what angle?',o:['90°','45°','60°','Any angle'],why:'The projection lines are normals to the plane, so they meet it at 90°.'},
+ {q:'The plan of a solid is its orthogonal projection on which plane?',o:['A horizontal plane, looking from the top','A vertical plane, looking from the front','A vertical plane, looking from the side','A sloping plane'],why:'The plan is what you see from directly above, projected on a horizontal plane.'},
+ {q:'The front elevation is the orthogonal projection on which plane?',o:['A vertical plane, looking from the front','A horizontal plane, looking from the top','A horizontal plane, looking from below','A plane tilted at 45°'],why:'Elevations are drawn on vertical planes. The front elevation is seen from the front.'},
+ {q:'Which line is used for an edge that is hidden from view?',o:['Dashed line','Thick solid line','Thin solid line','No line at all'],why:'Hidden edges are still part of the solid, so they are shown with dashed lines.'},
+ {q:'Which line is used for an edge you can see?',o:['Thick solid line','Dashed line','Thin solid line','Dotted line at 45°'],why:'Visible edges are drawn with thick solid lines.'},
+ {q:'What are thin solid lines used for in a plan and elevation drawing?',o:['Construction (projection) lines','Hidden edges','Visible edges','Curved surfaces'],why:'Thin lines carry measurements from one view to another. They stay on the drawing.'},
+ {q:'An edge 5 cm long is parallel to the plane of projection. How long is it in the projection?',o:['5 cm','Less than 5 cm','More than 5 cm','0 cm, it becomes a point'],why:'An edge parallel to the plane keeps its true length.'},
+ {q:'An edge is perpendicular to the plane of projection. What does it look like in the projection?',o:['A point','A line of true length','A shorter line','A dashed line'],why:'You are looking straight along the edge, so both ends land on the same point.'},
+ {q:'An edge is tilted (inclined) to the plane of projection. Its projection is…',o:['shorter than the true length','the same as the true length','longer than the true length','always a point'],why:'A tilted edge is foreshortened. Only parallel edges keep their true length.'},
+ {q:'A face of a solid is parallel to the plane of projection. Its projection has…',o:['the same shape and the same size','the same shape but a smaller size','a different shape','only a straight line'],why:'A parallel face is copied exactly: true lengths and true angles.'},
+ {q:'A cylinder stands upright on its circular base. What is its plan?',fig:()=>[v3(S('cyl'))],o:['A circle','A rectangle','A triangle','An ellipse'],why:'From the top you see the circular face.'},
+ {q:'A cone stands on its circular base. What is its front elevation?',fig:()=>[v3(S('cone'))],o:['An isosceles triangle','A circle','A rectangle','A semicircle'],why:'From the front, the base is a horizontal line and the curved surface narrows to the apex.'},
+ {q:'Which solid has a circle as its plan, its front elevation and its side elevation?',o:['Sphere','Cylinder','Cone','Cube'],why:'A sphere looks the same from every direction.'},
+ {q:'A cuboid is 8 cm long, 5 cm wide and 3 cm high. The 8 cm edge faces the front. What are the measurements of its side elevation?',fig:()=>[v3(S('box853'))],o:['5 cm × 3 cm','8 cm × 3 cm','8 cm × 5 cm','5 cm × 5 cm'],why:'The side elevation shows the width and the height: 5 cm by 3 cm.'},
+ {q:'The plan of a cuboid is 6 cm × 4 cm and its front elevation is 6 cm × 5 cm. What is its volume?',o:['120 cm³','24 cm³','30 cm³','60 cm³'],why:'Length 6 cm, width 4 cm, height 5 cm. Volume = 6 × 4 × 5 = 120 cm³.'},
+ {q:'A ramp has a sloping edge of 5 cm. The edge rises 3 cm over a horizontal distance of 4 cm. How long is the sloping edge in the plan?',fig:()=>[v3(S('ramp4'))],o:['4 cm','5 cm','3 cm','7 cm'],why:'The plan shows only the horizontal distance covered by the edge, which is 4 cm.'},
+ {q:'Which measurement appears in both the front elevation and the side elevation?',o:['Height','Length','Width','None of them'],why:'Both elevations are drawn on vertical planes, so both show the height.'},
+ {q:'Which measurement can you <b>not</b> read from the plan?',o:['Height','Length','Width','Diameter of a circular base'],why:'The plan is seen from the top, so vertical measurements do not show.'},
+ {q:'An upright pyramid has a square base. What does its plan look like?',fig:()=>[v3(S('pyr'))],o:['A square with both diagonals drawn','A triangle','A square with nothing inside','A square with one line through the middle'],why:'The four sloping edges are seen from the top as lines from each corner to the centre.'},
+ {q:'What is the 45° line used for?',o:['To carry widths from the plan to the side elevation','To draw hidden edges','To measure the height of the solid','To show the direction of view'],why:'Lines from the plan turn through 90° at the 45° line, so widths transfer exactly.'},
+ {q:'A cylinder lies on its side with a circular face towards the front. What is its plan?',fig:()=>[v3(S('cylF'))],o:['A rectangle','A circle','A triangle','A square with diagonals'],why:'From the top you see the curved surface as a rectangle. The circle shows in the front elevation.'},
+ {q:'This is a triangular prism and its plan. What is the line in the middle of the plan?',fig:()=>[v3(S('roof')),viewSVG(S('roof').plan,14)],o:['The top edge where the two sloping faces meet','A hidden edge of the base','A construction line','The front edge of the base'],why:'From the top you can see the ridge, so it is a solid line across the plan.'},
+ {q:'This is a grooved block and its side elevation from the right. What does the dashed line show?',fig:()=>[v3(S('groove')),viewSVG(S('groove').side,14)],o:['The floor of the groove, hidden behind the wall','The top of the block','A construction line','A crack in the block'],why:'The groove floor is 2 cm up but cannot be seen from the right, so it is dashed.'}
+];
+const NUMS=[
+ {q:'These are the three views of an L-shaped block. Find its volume.',fig:()=>[v3(S('lblock')),layoutSVG(S('lblock'),false)],n:72,unit:'cm³',why:'Area of the L in the front elevation = 6 × 2 + 2 × 3 = 18 cm². Depth from the plan = 4 cm. Volume = 18 × 4 = 72 cm³.'},
+ {q:'These are the three views of a grooved block. Find its volume.',fig:()=>[v3(S('groove')),layoutSVG(S('groove'),false)],n:80,unit:'cm³',why:'Area of the front elevation = 6 × 4 − 2 × 2 = 20 cm². Depth = 4 cm. Volume = 20 × 4 = 80 cm³.'},
+ {q:'These are the three views of a triangular prism. Find its volume.',fig:()=>[v3(S('roof')),layoutSVG(S('roof'),false)],n:48,unit:'cm³',why:'Area of the triangle = ½ × 6 × 4 = 12 cm². Length of prism = 4 cm. Volume = 12 × 4 = 48 cm³.'},
+ {q:'A ramp is a right-angled triangular prism. The triangle has a horizontal base of 8 cm and a height of 6 cm. What is the true length of the sloping edge?',fig:()=>[v3(S('ramp8'))],n:10,unit:'cm',why:'Pythagoras: √(8² + 6²) = √100 = 10 cm.'},
+ {q:'For the same ramp (base 8 cm, height 6 cm, sloping edge 10 cm), how long is the sloping edge when drawn in the plan?',fig:()=>[v3(S('ramp8'))],n:8,unit:'cm',why:'In the plan only the horizontal distance shows, so the edge is drawn 8 cm long.'},
+ {q:'Look at the triangular prism. How long is each sloping edge of the front triangle in real life?',fig:()=>[v3(S('roof')),viewSVG(S('roof').front,14)],n:5,unit:'cm',why:'Each sloping edge covers 3 cm across and 4 cm up. √(3² + 4²) = 5 cm.'}
+];
+function matchQs(){const sig=v=>JSON.stringify(v),all=[];SOLIDS.forEach(s=>VK.forEach(k=>all.push(sig(s[k]))));const out=[];
+  SOLIDS.forEach(s=>VK.forEach(k=>{const me=sig(s[k]);if(VK.filter(x=>sig(s[x])===me).length>1)return;
+    const opts=uniq([me,...VK.map(x=>sig(s[x]))]);
+    for(const v of shuffle(all)){if(opts.length>=4)break;if(!opts.includes(v))opts.push(v);}
+    const v=s[k];
+    out.push({q:`Which drawing is the <b>${VN[k]}</b> of this solid? Each square is 1 cm.`,fig:()=>[v3(s)],vis:true,o:opts.map(x=>viewSVG(JSON.parse(x),12,[6,5])),
+      why:`Seen from ${VDIR[k]}, the solid is ${v.w} cm across and ${v.h} cm ${k==='plan'?'deep':'high'}. ${s.note}`});}));
+  return out;}
+const figHTML=q=>q.fig?`<div class="qfig">${q.fig().map(h=>`<div class="panel">${h}</div>`).join('')}</div>`:'';
+
+/* ---------- question renderers ---------- */
+function mcq(host,q,{practice,onPick}){
+  const order=shuffle(q.o.map((_,i)=>i));
+  host.innerHTML=`<p class="qtext">${q.q}</p>${figHTML(q)}<div class="opts${q.vis?' vis':''}">${order.map((i,k)=>`<button type="button" class="opt" data-i="${i}"><span class="key">${'ABCD'[k]}</span><span>${q.o[i]}</span></button>`).join('')}</div><div class="fb" hidden></div>`;
+  const btns=$$('.opt',host),fb=$('.fb',host);
+  btns.forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+    if(practice){btns.forEach(x=>{x.disabled=true;if(+x.dataset.i===0)x.classList.add('right');});if(i!==0)b.classList.add('wrong');
+      fb.hidden=false;fb.className='fb '+(i===0?'ok':'no');fb.innerHTML=`<b>${i===0?'Correct.':'Not quite.'}</b> ${q.why}`;}
+    else{btns.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
+    onPick(i);}));}
+function numq(host,q,onDone){
+  host.innerHTML=`<p class="qtext">${q.q}</p>${figHTML(q)}<form class="numf"><label for="num-in">Your answer</label><input type="text" id="num-in" inputmode="decimal" autocomplete="off"><span>${q.unit}</span><button class="btn" type="submit">Check</button></form><div class="fb" hidden></div>`;
+  const f=$('form',host),inp=$('#num-in',host),fb=$('.fb',host);
+  f.addEventListener('submit',e=>{e.preventDefault();const v=parseFloat(inp.value.replace(',','.'));fb.hidden=false;
+    if(isNaN(v)){fb.className='fb';fb.textContent='Type a number, then press Check.';return;}
+    const ok=Math.abs(v-q.n)<0.011;fb.className='fb '+(ok?'ok':'no');fb.innerHTML=`<b>${ok?'Correct.':'Not quite. The answer is '+q.n+' '+q.unit+'.'}</b> ${q.why}`;
+    inp.disabled=true;$('button',f).disabled=true;onDone(ok);});}
+
+/* ---------- practice ---------- */
+let P={set:'concept',list:[],i:0,a:0,c:0};
+const record=(set,ok)=>{store.practice[set].a++;if(ok)store.practice[set].c++;P.a++;if(ok)P.c++;save();pMeta();renderScore();};
+const pMeta=()=>{$('#p-meta').textContent=P.a?`This session: ${P.c} of ${P.a} correct`:'This session: no answers yet';};
+function startSet(k){P={set:k,list:k==='concept'?shuffle(CONCEPTS):k==='views'?shuffle([...matchQs(),...NUMS]):k==='polya'?PQS.slice():shuffle(drawTasks()),i:0,a:0,c:0};
+  $$('#p-sets .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.set===k));pMeta();showP();}
+function showP(){const nx=$('#p-next');nx.hidden=true;const item=P.list[P.i%P.list.length],isDraw=P.set==='draw';
+  $('#p-q').hidden=isDraw;$('#p-draw').hidden=!isDraw;nx.textContent=isDraw?'Next drawing':'Next question';
+  if(isDraw){startDraw(item);nx.hidden=false;return;}
+  const host=$('#p-q');
+  if(item.n!=null){numq(host,item,ok=>{record(P.set,ok);nx.hidden=false;});if(item.steps)host.insertAdjacentHTML('beforeend',polyaHTML(item));}
+  else mcq(host,item,{practice:true,onPick:i=>{record(P.set,i===0);nx.hidden=false;}});}
+$('#p-sets').addEventListener('click',e=>{const b=e.target.closest('[data-set]');if(b)startSet(b.dataset.set);});
+$('#p-next').addEventListener('click',()=>{P.i++;showP();$('#v-practice').scrollIntoView({block:'start'});});
+
+/* ---------- drawing board ---------- */
+const GW=8,GH=7,GU=32,GP=16;
+let B={task:null,segs:[],start:null,dash:false,scored:false};
+const drawTasks=()=>{const t=[];SOLIDS.forEach(s=>VK.forEach(k=>{if(!s[k].s.some(x=>x.t==='circle'))t.push({s,k});}));return t;};
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+function canon(segs,ignoreStyle){if(!segs.length)return '';
+  const mx=Math.min(...segs.flatMap(s=>[s[0],s[2]])),my=Math.min(...segs.flatMap(s=>[s[1],s[3]])),G={};
+  for(const s of segs){const x1=s[0]-mx,y1=s[1]-my,x2=s[2]-mx,y2=s[3]-my;let dx=x2-x1,dy=y2-y1;const g=gcd(Math.abs(dx),Math.abs(dy));if(!g)continue;dx/=g;dy/=g;
+    if(dx<0||(dx===0&&dy<0)){dx=-dx;dy=-dy;}
+    const k=[ignoreStyle?0:(s[4]?1:0),dx,dy,dx*y1-dy*x1].join(','),t1=x1*dx+y1*dy,t2=x2*dx+y2*dy;(G[k]=G[k]||[]).push([Math.min(t1,t2),Math.max(t1,t2)]);}
+  return Object.keys(G).sort().map(k=>{const iv=G[k].sort((a,b)=>a[0]-b[0]),out=[iv[0].slice()];
+    for(const [a,b] of iv.slice(1)){const l=out[out.length-1];if(a<=l[1])l[1]=Math.max(l[1],b);else out.push([a,b]);}
+    return k+':'+out.map(i=>i.join('-')).join('|');}).join(';');}
+const viewSegs=v=>v.s.flatMap(s=>s.t==='poly'?s.pts.map((p,i)=>{const q=s.pts[(i+1)%s.pts.length];return [p[0],p[1],q[0],q[1],false];}):[[...s.p,s.dash]]);
+function renderBoard(){const X=i=>GP+i*GU,w=GW*GU+GP*2,h=GH*GU+GP*2;let o='';
+  for(let i=0;i<=GW;i++)o+=`<line class="gl" x1="${X(i)}" y1="${GP}" x2="${X(i)}" y2="${h-GP}"/>`;
+  for(let j=0;j<=GH;j++)o+=`<line class="gl" x1="${GP}" y1="${X(j)}" x2="${w-GP}" y2="${X(j)}"/>`;
+  B.segs.forEach(s=>o+=`<line class="edge${s[4]?' hid':''}" x1="${X(s[0])}" y1="${X(s[1])}" x2="${X(s[2])}" y2="${X(s[3])}"/>`);
+  for(let i=0;i<=GW;i++)for(let j=0;j<=GH;j++){const st=B.start&&B.start[0]===i&&B.start[1]===j;
+    o+=`<circle class="${st?'pend':'pt'}" cx="${X(i)}" cy="${X(j)}" r="${st?5:1.8}"/><circle class="hit" data-p="${i},${j}" cx="${X(i)}" cy="${X(j)}" r="13"/>`;}
+  $('#board').innerHTML=`<svg class="dwg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Drawing grid">${o}</svg>`;}
+function startDraw(t){B={task:t,segs:[],start:null,dash:false,scored:false};setStyle(false);
+  $('#d-prompt').innerHTML=`Draw the <b>${VN[t.k]}</b> of this ${t.s.name.toLowerCase()}, as seen from ${VDIR[t.k]}. Use a dashed line for any hidden edge.`;
+  $('#d-iso').innerHTML=v3(t.s);$('#d-fb').hidden=true;renderBoard();}
+function setStyle(d){B.dash=d;$('#d-solid').setAttribute('aria-pressed',!d);$('#d-dash').setAttribute('aria-pressed',d);}
+$('#board').addEventListener('click',e=>{const c=e.target.closest('[data-p]');if(!c)return;const p=c.dataset.p.split(',').map(Number);
+  if(!B.start)B.start=p;else{if(p[0]!==B.start[0]||p[1]!==B.start[1])B.segs.push([B.start[0],B.start[1],p[0],p[1],B.dash]);B.start=null;}renderBoard();});
+$('#d-solid').addEventListener('click',()=>setStyle(false));$('#d-dash').addEventListener('click',()=>setStyle(true));
+$('#d-undo').addEventListener('click',()=>{if(B.start)B.start=null;else B.segs.pop();renderBoard();});
+$('#d-clear').addEventListener('click',()=>{B.segs=[];B.start=null;renderBoard();});
+$('#d-check').addEventListener('click',()=>{const fb=$('#d-fb'),t=B.task,v=t.s[t.k];fb.hidden=false;
+  if(!B.segs.length){fb.className='fb';fb.textContent='Draw some lines first.';return;}
+  const mine=B.segs.map(s=>[s[0],-s[1],s[2],-s[3],s[4]]),ans=viewSegs(v),ok=canon(mine)===canon(ans);
+  if(!B.scored){B.scored=true;record('draw',ok);}
+  if(ok){fb.className='fb ok';fb.innerHTML=`<b>Correct.</b> ${t.s.note}`;}
+  else if(canon(mine,true)===canon(ans,true)){fb.className='fb no';fb.innerHTML='<b>Nearly.</b> The lines are in the right places. Check which edges are visible (solid) and which are hidden (dashed).';}
+  else{fb.className='fb no';fb.innerHTML=`<b>Not yet.</b> The outline should be ${v.w} cm across and ${v.h} cm ${t.k==='plan'?'deep':'high'}. Check for edges inside the outline, then try again. Correct drawing:<div class="panel" style="margin-top:8px;display:inline-flex">${viewSVG(v,14)}</div>`;}});
+
+/* ---------- quiz ---------- */
+const QN=12;let Q=null,qTimer=null;
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function quizHome(){clearInterval(qTimer);Q=null;const best=store.quizzes.length?Math.max(...store.quizzes.map(q=>Math.round(q.score/q.total*100))):null;
+  $('#q-card').innerHTML=`<h2>Chapter 7 quiz</h2><div class="prose"><p>${QN} questions on orthogonal projections, plans and elevations. Answers are shown at the end, and your mark is saved to the Score page.</p>${best!=null?`<p class="meta">Best so far: ${best}%</p>`:''}</div><div class="row"><button type="button" class="btn" id="q-start">Start quiz</button></div>`;
+  $('#q-start').addEventListener('click',()=>{Q={qs:shuffle([...shuffle(CONCEPTS).slice(0,8),...shuffle(matchQs()).slice(0,4)]),i:0,ans:[],t0:Date.now()};quizQ();
+    qTimer=setInterval(()=>{const t=$('#q-time');if(t&&Q)t.textContent=fmt(Math.round((Date.now()-Q.t0)/1000));},1000);});}
+function quizQ(){const c=$('#q-card'),last=Q.i===QN-1;
+  c.innerHTML=`<div class="row"><span class="meta">Question ${Q.i+1} of ${QN}</span><div class="bar"><i style="width:${Q.i/QN*100}%"></i></div><span class="meta" id="q-time">${fmt(Math.round((Date.now()-Q.t0)/1000))}</span></div><div id="q-host" class="view" style="gap:14px"></div><div class="row"><button type="button" class="btn" id="q-next" disabled>${last?'Finish quiz':'Next question'}</button></div>`;
+  mcq($('#q-host'),Q.qs[Q.i],{practice:false,onPick:i=>{Q.ans[Q.i]=i;$('#q-next').disabled=false;}});
+  $('#q-next').addEventListener('click',()=>{Q.i++;if(Q.i<QN)quizQ();else quizEnd();$('#v-quiz').scrollIntoView({block:'start'});});}
+function quizEnd(){clearInterval(qTimer);const secs=Math.round((Date.now()-Q.t0)/1000),score=Q.ans.filter(a=>a===0).length,pct=Math.round(score/QN*100);
+  store.quizzes.push({d:Date.now(),score,total:QN,secs});save();renderScore();if(pct>=70)party();
+  const msg=pct>=85?'Excellent! You have mastered this chapter.':pct>=70?'Good work. Review the questions you missed.':pct>=50?'Getting there. Go through the notes again, then retry.':'Read the notes and try the practice before the next attempt.';
+  $('#q-card').innerHTML=`<h2>Your result</h2><div class="row" style="align-items:baseline"><span class="big">${score}/${QN}</span><span class="meta">${pct}% · time ${fmt(secs)}</span></div><p>${msg}</p><div class="row"><button type="button" class="btn" id="q-again">Try another quiz</button><a class="btn ghost" href="#score" style="text-decoration:none">See my scores</a></div><h3>Review</h3><div class="review">${Q.qs.map((q,i)=>{const ok=Q.ans[i]===0;
+    return `<div><span class="tag ${ok?'ok':'no'}">Q${i+1} · ${ok?'correct':'wrong'}</span><p class="qtext">${q.q}</p>${figHTML(q)}${ok?'':`<p class="ans">Your answer: ${q.o[Q.ans[i]]}</p>`}<p class="ans">Correct answer: ${q.o[0]}</p><p class="muted">${q.why}</p></div>`;}).join('')}</div>`;
+  $('#q-again').addEventListener('click',quizHome);}
+
+/* ---------- score ---------- */
+const READS=['s1','s2','s3','s4','s5','s6','s7'];
+function renderScore(){const qs=store.quizzes,pcts=qs.map(q=>Math.round(q.score/q.total*100)),pa=Object.values(store.practice).reduce((t,p)=>t+p.a,0),pc=Object.values(store.practice).reduce((t,p)=>t+p.c,0);
+  $('#s-tiles').innerHTML=[[qs.length?Math.max(...pcts)+'%':'–','Best quiz score'],[qs.length,'Quizzes taken'],[pa?Math.round(pc/pa*100)+'%':'–','Practice accuracy'],[READS.filter(r=>store.read[r]).length+'/'+READS.length,'Notes understood']].map(([b,s])=>`<div class="tile"><b>${b}</b><span>${s}</span></div>`).join('');
+  $('#s-practice').innerHTML=[['concept','Key ideas'],['views','Read the views'],['draw','Drawing board'],['polya','Problem solving']].map(([k,n])=>{const p=store.practice[k],pc=p.a?Math.round(p.c/p.a*100):0;
+    return `<div class="row"><span style="width:130px">${n}</span><div class="bar"><i style="width:${pc}%"></i></div><span class="meta" style="width:110px;text-align:right">${p.a?`${p.c}/${p.a} · ${pc}%`:'not started'}</span></div>`;}).join('');
+  $('#s-hist').innerHTML=qs.length?`<table><thead><tr><th>Attempt</th><th>Date</th><th>Score</th><th>Percent</th><th>Time</th></tr></thead><tbody>${qs.map((q,i)=>`<tr><td>${i+1}</td><td>${new Date(q.d).toLocaleDateString()}</td><td>${q.score}/${q.total}</td><td>${pcts[i]}%</td><td>${fmt(q.secs)}</td></tr>`).reverse().join('')}</tbody></table>`:'<p class="muted">No quiz taken yet. Your attempts will be listed here with the date, mark and time.</p>';}
+$('#stu-name').value=store.name||'';
+$('#stu-name').addEventListener('input',e=>{store.name=e.target.value;save();setWho();});
+$('#stu-class').addEventListener('input',e=>{store.cls=e.target.value;save();setWho();});
+$('#s-reset').addEventListener('click',()=>{$('#s-confirm').hidden=false;});
+$('#s-no').addEventListener('click',()=>{$('#s-confirm').hidden=true;});
+$('#s-yes').addEventListener('click',()=>{store=blank();save();$('#s-confirm').hidden=true;syncReads();renderScore();quizHome();showGate();});
+const syncReads=()=>$$('[data-read]').forEach(c=>c.checked=!!store.read[c.dataset.read]);
+$$('[data-read]').forEach(c=>c.addEventListener('change',()=>{store.read[c.dataset.read]=c.checked;save();renderScore();}));
+
+/* ---------- tabs ---------- */
+const TABS=['notes','practice','quiz','score'];
+function route(){const t=TABS.includes(location.hash.slice(1))?location.hash.slice(1):'notes';
+  TABS.forEach(x=>{$('#v-'+x).hidden=x!==t;});
+  $$('nav.tabs a').forEach(a=>{if(a.dataset.tab===t)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
+window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0);});
+
+/* ---------- 3D viewers (one shared WebGL renderer, copied into each small canvas) ---------- */
+const V3={ok:!!window.THREE,cache:{}};
+const tok=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function initGL(){if(V3.r||!V3.ok)return;try{
+  const r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(480,440,false);
+  V3.scene=new THREE.Scene();V3.scene.add(new THREE.AmbientLight(0xffffff,.72));
+  const d=new THREE.DirectionalLight(0xffffff,.5);d.position.set(4,7,9);V3.scene.add(d);
+  V3.cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);V3.cam.position.z=40;
+  V3.mat=new THREE.MeshLambertMaterial({polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
+  V3.lmat=new THREE.LineBasicMaterial();V3.unit=new THREE.BoxGeometry(1,1,1);V3.unitE=new THREE.EdgesGeometry(V3.unit);V3.r=r;
+ }catch(e){V3.ok=false;}}
+function buildGroup(s){const g=new THREE.Group(),add=geo=>{g.add(new THREE.Mesh(geo,V3.mat));g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,20),V3.lmat));};
+  if(s.comp){s.comp.parts.forEach(p=>{const geo=new THREE.ExtrudeGeometry(new THREE.Shape(p.poly.map(q=>new THREE.Vector2(q[0],q[1]))),{depth:p.y1-p.y0,bevelEnabled:false});geo.translate(-s.W/2,-s.H/2,s.D/2-p.y1);g.add(new THREE.Mesh(geo,V3.mat));});
+    const pos=[];s.comp.edges.forEach(e=>pos.push(e[0]-s.W/2,e[2]-s.H/2,s.D/2-e[1],e[3]-s.W/2,e[5]-s.H/2,s.D/2-e[4]));
+    const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.add(new THREE.LineSegments(lg,V3.lmat));return g;}
+  if(s.cubes){s.cubes.forEach((col,x)=>col.forEach((h,y)=>{for(let z=0;z<h;z++){const m=new THREE.Mesh(V3.unit,V3.mat);m.position.set(x+.5-2,z+.5-s.H/2,2-y-.5);g.add(m);const e=new THREE.LineSegments(V3.unitE,V3.lmat);e.position.copy(m.position);g.add(e);}}));}
+  else if(s.cyl)add(new THREE.CylinderGeometry(s.r,s.r,s.H,48));
+  else if(s.kind==='cone')add(new THREE.ConeGeometry(s.r,s.H,48));
+  else if(s.kind==='pyr'){let geo=new THREE.ConeGeometry(2*Math.SQRT2,s.H,4);geo.rotateY(Math.PI/4);geo=geo.toNonIndexed();geo.computeVertexNormals();add(geo);}
+  else if(s.kind==='cylF'){const geo=new THREE.CylinderGeometry(s.r,s.r,s.D,48);geo.rotateX(Math.PI/2);add(geo);}
+  else{const geo=new THREE.ExtrudeGeometry(new THREE.Shape(s.poly.map(p=>new THREE.Vector2(p[0],p[1]))),{depth:s.D,bevelEnabled:false});geo.translate(-s.W/2,-s.H/2,-s.D/2);add(geo);}
+  return g;}
+function draw3(v){const r=V3.r,scene=V3.scene,cam=V3.cam,s=v.solid,R=Math.hypot(s.W,s.D,s.H)/2+1.5,a=480/440;
+  cam.left=-R*a;cam.right=R*a;cam.top=R;cam.bottom=-R;cam.updateProjectionMatrix();
+  V3.mat.color.set(tok(v.col||'--face-top')||'#ffd84d');V3.lmat.color.set(tok('--ink')||'#132a4f');
+  v.group.rotation.set(v.pitch,v.yaw,0);scene.add(v.group);r.render(scene,cam);scene.remove(v.group);
+  const c=v.canvas.getContext('2d');c.clearRect(0,0,480,440);c.drawImage(r.domElement,0,0);
+  c.font='600 19px "JetBrains Mono",monospace';c.textAlign='center';c.textBaseline='middle';c.fillStyle=tok('--accent')||'#c2410c';
+  [['FRONT',0,-s.H/2-.5,s.D/2+1.2],['SIDE',s.W/2+1.2,-s.H/2-.5,0]].forEach(l=>{const p=new THREE.Vector3(l[1],l[2],l[3]).applyEuler(v.group.rotation).project(cam);c.fillText(l[0],(p.x+1)*240,(1-p.y)*220);});}
+const SNAPS=[['3D',-.6,.42],['Top',0,Math.PI/2],['Front',0,0],['Side',-Math.PI/2,0]];
+function mount(el){el.dataset.on='1';if(!V3.ok)return;initGL();if(!V3.r)return;
+  const s=el.dataset.solid==='build'?buildSolid():ALL[el.dataset.solid];if(!s)return;
+  const canvas=document.createElement('canvas');canvas.width=480;canvas.height=440;canvas.setAttribute('role','img');canvas.setAttribute('aria-label',s.name+' in 3D. Drag to rotate.');
+  const v={el,canvas,solid:s,yaw:-.6,pitch:.42,col:FUNC[(Object.keys(ALL).indexOf(s.id)+5)%5]};
+  try{v.group=s.cubes?buildGroup(s):(V3.cache[s.id]||(V3.cache[s.id]=buildGroup(s)));}catch(e){return;}
+  const snap=document.createElement('div');snap.className='snap';
+  snap.innerHTML=SNAPS.map((x,i)=>`<button type="button" data-snap="${i}">${x[0]}</button>`).join('');
+  const hint=document.createElement('span');hint.className='hint';hint.textContent='Drag to rotate';
+  el.innerHTML='';el.append(canvas,snap,hint);el._v=v;
+  let last=null;
+  canvas.addEventListener('pointerdown',e=>{last=[e.clientX,e.clientY];try{canvas.setPointerCapture(e.pointerId);}catch(_){ }e.preventDefault();});
+  canvas.addEventListener('pointermove',e=>{if(!last)return;v.yaw+=(e.clientX-last[0])*.012;v.pitch=Math.max(-Math.PI/2,Math.min(Math.PI/2,v.pitch+(e.clientY-last[1])*.012));last=[e.clientX,e.clientY];draw3(v);});
+  const end=()=>{last=null;};canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+  snap.addEventListener('click',e=>{const b=e.target.closest('[data-snap]');if(!b)return;const x=SNAPS[+b.dataset.snap];v.yaw=x[1];v.pitch=x[2];draw3(v);});
+  draw3(v);}
+const scan=()=>$$('.v3:not([data-on])').forEach(mount);
+
+/* ---------- build-a-solid activity ---------- */
+let Bh=[[3,2,0,0],[2,1,0,0],[1,0,0,0],[0,0,0,0]],Bmode=1; // Bh[x][y], y=0 is the front
+const buildSolid=()=>({id:'build',name:'Your solid',cubes:Bh,W:4,D:4,H:4});
+function cellView(val,empty){const s=[],at=(i,j)=>i<0||i>3||j<0||j>3?empty:val(i,j);
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++)if(at(i,j)!==empty)s.push({t:'fill',p:[i,j]});
+  for(let i=0;i<=4;i++)for(let j=0;j<4;j++)if(at(i-1,j)!==at(i,j))s.push(ln(i,j,i,j+1));
+  for(let j=0;j<=4;j++)for(let i=0;i<4;i++)if(at(i,j-1)!==at(i,j))s.push(ln(i,j,i+1,j));
+  return {w:4,h:4,s};}
+function renderBuild(){let o='',n=0;
+  for(let y=3;y>=0;y--)for(let x=0;x<4;x++){const h=Bh[x][y];n+=h;o+=`<button type="button" data-c="${x},${y}" class="${h?'on':''}" aria-label="Square ${x+1}, row ${y+1} from the front: ${h} cubes">${h||''}</button>`;}
+  $('#b-grid').innerHTML=o;$('#b-count').textContent=n+(n===1?' cube':' cubes');
+  const plan=cellView((x,y)=>Bh[x][y],0),
+    front=cellView((x,z)=>{for(let y=0;y<4;y++)if(Bh[x][y]>z)return y;return 9;},9),
+    side=cellView((y,z)=>{for(let x=3;x>=0;x--)if(Bh[x][y]>z)return x;return -1;},-1);
+  $('#b-views').innerHTML=[['Plan (from the top)',plan],['Front elevation',front],['Side elevation (from the right)',side]].map(a=>`<figure><div class="panel">${viewSVG(a[1],18)}</div><figcaption>${a[0]}</figcaption></figure>`).join('');
+  const v=$('#b-3d')._v;if(v){v.solid=buildSolid();v.group=buildGroup(v.solid);draw3(v);}}
+$('#b-grid').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c.split(',').map(Number);
+  Bh[c[0]][c[1]]=Math.max(0,Math.min(4,Bh[c[0]][c[1]]+Bmode));renderBuild();});
+const setMode=m=>{Bmode=m;$('#b-add').setAttribute('aria-pressed',m===1);$('#b-rem').setAttribute('aria-pressed',m===-1);};
+$('#b-add').addEventListener('click',()=>setMode(1));$('#b-rem').addEventListener('click',()=>setMode(-1));
+$('#b-clear').addEventListener('click',()=>{Bh=Bh.map(c=>c.map(()=>0));renderBuild();});
+
+/* ---------- copy results ---------- */
+$('#s-copy').addEventListener('click',()=>{const qs=store.quizzes,l=qs[qs.length-1],pr=Object.values(store.practice);
+  const row=[store.name||'',store.cls||'',new Date().toISOString().slice(0,10),qs.length?Math.max(...qs.map(q=>Math.round(q.score/q.total*100))):'',l?l.score+'/'+l.total:'',qs.length,pr.reduce((t,p)=>t+p.c,0),pr.reduce((t,p)=>t+p.a,0),READS.filter(r=>store.read[r]).length+'/'+READS.length].join('\t');
+  const msg=$('#s-copy-msg'),out=$('#s-copy-out'),fail=()=>{out.hidden=false;out.value=row;out.select();msg.textContent='Copy the selected row, then paste it into your sheet.';};
+  try{navigator.clipboard.writeText(row).then(()=>{msg.textContent='Copied. Paste it into a row of the Google Sheet.';},fail);}catch(e){fail();}});
+
+/* ---------- practice: five problem-solving questions on complex prisms, each solved with Polya's four steps ---------- */
+[['pq1','Staircase',6,4,3,[[0,0],[6,0],[6,1],[4,1],[4,2],[2,2],[2,3],[0,3]],[ln(2,0,2,4),ln(4,0,4,4)],[ln(0,1,4,1),ln(0,2,4,2)]],
+ ['pq2','House model',6,8,7,[[0,0],[6,0],[6,3],[3,7],[0,3]],[ln(3,0,3,8)],[ln(0,3,8,3)]],
+ ['pq3','T-shaped beam',6,5,6,[[2,0],[4,0],[4,4],[6,4],[6,6],[0,6],[0,4],[2,4]],[ln(2,0,2,5,1),ln(4,0,4,5,1)],[ln(0,4,5,4)]],
+ ['pq4','Water trough',8,10,5,[[0,0],[8,0],[8,5],[6,5],[6,2],[2,2],[2,5],[0,5]],[ln(2,0,2,10),ln(6,0,6,10)],[ln(0,2,10,2,1)]],
+ ['pq5','Swimming pool model',10,5,4,[[0,0],[3,0],[7,3],[10,3],[10,4],[0,4]],[ln(3,0,3,5,1),ln(7,0,7,5,1)],[ln(0,3,5,3)]]
+].forEach(([id,name,W,D,H,poly,pl,sd])=>{ALL[id]={id,name,W,D,H,poly,front:{w:W,h:H,s:[{t:'poly',pts:poly}]},plan:{w:W,h:D,s:[rect(W,D),...pl]},side:{w:D,h:H,s:[rect(D,H),...sd]}};});
+const pfig=id=>()=>[v3(S(id)),layoutSVG(S(id),false)];
+const PQS=[
+ {q:'<b>Problem 1: the staircase.</b> A model staircase has three steps. Each step goes 2 cm across and 1 cm up. The staircase is 4 cm wide. Turn the 3D model and study the three views (1 square = 1 cm). Find the volume of the staircase.',fig:pfig('pq1'),n:48,unit:'cm³',why:'Open the four steps below to see the full method.',
+  steps:['<p><b>Given:</b> the front elevation is the staircase shape, 6 cm across and 3 cm high. Each step is 2 cm across and 1 cm up. The plan shows the width, 4 cm.</p><p><b>Find:</b> the volume.</p>',
+   '<ul><li>The staircase is a prism. Its cross-section is the front elevation.</li><li>Split the cross-section into three rectangles: 6 × 1, 4 × 1 and 2 × 1.</li><li>Volume = area of cross-section × width.</li></ul>',
+   '<p>Area = 6 + 4 + 2 = 12 cm²</p><p>Volume = 12 × 4 = <b>48 cm³</b></p>',
+   '<ul><li>Count the squares inside the front elevation: there are 12. The area is correct.</li><li>A box around the staircase is 6 × 4 × 3 = 72 cm³. The answer, 48 cm³, is smaller than the box, as it should be.</li></ul>']},
+ {q:'<b>Problem 2: the roof.</b> A model house is a prism. Its walls are 3 cm high and the top of the roof is 7 cm above the ground. The house is 6 cm across and 8 cm long from front to back. Find the total area of the two sloping roof faces.',fig:pfig('pq2'),n:80,unit:'cm²',why:'Open the four steps below to see the full method.',
+  steps:['<p><b>Given:</b> the front elevation is 6 cm across. The walls are 3 cm high and the top of the roof is at 7 cm, in the middle. The plan shows the house is 8 cm long.</p><p><b>Find:</b> the total area of the two sloping faces.</p><p><b>Careful:</b> in the plan each roof face looks 3 cm wide, but the faces are tilted, so that is not the true width.</p>',
+   '<ul><li>The front elevation shows the sloping edge at its true length. Each slope goes 3 cm across and 7 − 3 = 4 cm up.</li><li>Use Pythagoras\' theorem to find the true length of the slope.</li><li>Each roof face is a rectangle: slope × length of house. Then multiply by 2.</li></ul>',
+   '<p>Slope = √(3² + 4²) = √25 = 5 cm</p><p>One face = 5 × 8 = 40 cm²</p><p>Two faces = 2 × 40 = <b>80 cm²</b></p>',
+   '<ul><li>In the plan the roof covers 6 × 8 = 48 cm². The true area must be bigger because the faces are tilted, and 80 cm² is bigger.</li><li>The slope (5 cm) is longer than its plan width (3 cm). This agrees with the rule for a tilted edge.</li></ul>']},
+ {q:'<b>Problem 3: the steel beam.</b> A model beam has a T-shaped front elevation. The top bar is 6 cm across and 2 cm high. The stem is 2 cm across and 4 cm high. The beam is 5 cm long. Each 1 cm³ of steel has a mass of 8 g. Find the mass of the beam.',fig:pfig('pq3'),n:800,unit:'g',why:'Open the four steps below to see the full method.',
+  steps:['<p><b>Given:</b> a T-shaped front elevation with a bar 6 cm × 2 cm and a stem 2 cm × 4 cm. The plan shows the beam is 5 cm long. 1 cm³ of steel has a mass of 8 g.</p><p>The dashed lines in the plan are the sides of the stem, hidden under the bar.</p><p><b>Find:</b> the mass of the beam.</p>',
+   '<ul><li>Find the volume first. The beam is a prism with the T as its cross-section.</li><li>Split the T into two rectangles and add their areas.</li><li>Volume = area × length. Then mass = volume × 8.</li></ul>',
+   '<p>Area = 6 × 2 + 2 × 4 = 20 cm²</p><p>Volume = 20 × 5 = 100 cm³</p><p>Mass = 100 × 8 = <b>800 g</b></p>',
+   '<ul><li>Check the area another way: a 6 × 6 square minus two 2 × 4 corners = 36 − 16 = 20 cm². It matches.</li><li>A full block 6 × 5 × 6 = 180 cm³ would have a mass of 1440 g. The beam is lighter, as it should be.</li></ul>']},
+ {q:'<b>Problem 4: the water trough.</b> A model trough has a U-shaped front elevation. It is 8 cm across, 5 cm high and 10 cm long. The walls are 2 cm thick and the floor is 2 cm thick. How much water can the trough hold when it is full?',fig:pfig('pq4'),n:120,unit:'cm³',why:'Open the four steps below to see the full method.',
+  steps:['<p><b>Given:</b> outside measurements 8 cm × 5 cm × 10 cm. Walls 2 cm thick, floor 2 cm thick. The dashed line in the side elevation is the floor of the channel.</p><p><b>Find:</b> the volume of the empty space inside, not the volume of the solid.</p>',
+   '<ul><li>The water fills the channel, which is a cuboid.</li><li>Find the width and depth of the channel from the front elevation, and its length from the plan.</li><li>Volume = width × depth × length.</li></ul>',
+   '<p>Width of channel = 8 − 2 − 2 = 4 cm</p><p>Depth of channel = 5 − 2 = 3 cm</p><p>Volume of water = 4 × 3 × 10 = <b>120 cm³</b></p>',
+   '<ul><li>The whole box is 8 × 5 × 10 = 400 cm³. The solid part is (40 − 12) × 10 = 280 cm³.</li><li>280 + 120 = 400 cm³. The solid and the water together fill the box exactly, so the answer is correct.</li></ul>']},
+ {q:'<b>Problem 5: the swimming pool.</b> This solid is a model of the water in a swimming pool. The pool is 10 cm long and 5 cm wide. The deep end is 4 cm deep for the first 3 cm. Then the floor slopes up. The shallow end is 1 cm deep for the last 3 cm. Find the volume of water.',fig:pfig('pq5'),n:125,unit:'cm³',why:'Open the four steps below to see the full method.',
+  steps:['<p><b>Given:</b> the front elevation is the cross-section of the water. It is 10 cm long at the top. It is 4 cm deep for 3 cm, then the floor slopes over the next 4 cm, then it is 1 cm deep for 3 cm. The plan shows the width, 5 cm.</p><p><b>Find:</b> the volume of water.</p>',
+   '<ul><li>The water is a prism with the front elevation as its cross-section.</li><li>Split the cross-section into three parts: a deep rectangle, a trapezium in the middle and a shallow rectangle.</li><li>Add the three areas, then multiply by the width.</li></ul>',
+   '<p>Deep rectangle = 3 × 4 = 12 cm²</p><p>Trapezium = ½ × (4 + 1) × 4 = 10 cm²</p><p>Shallow rectangle = 3 × 1 = 3 cm²</p><p>Area = 12 + 10 + 3 = 25 cm²</p><p>Volume = 25 × 5 = <b>125 cm³</b></p>',
+   '<ul><li>Check the area another way: the full rectangle 10 × 4 = 40 cm² minus the part under the floor (½ × 4 × 3 + 3 × 3 = 15 cm²) = 25 cm². It matches.</li><li>A box around the water is 10 × 5 × 4 = 200 cm³. The answer is smaller, as it should be.</li></ul>']}
+];
+const PNAMES=['Understand the problem','Devise a plan','Carry out the plan','Look back'];
+const polyaHTML=q=>`<h3>Solve it with Polya's four steps</h3><p class="muted">Stuck? Open one step at a time and try each step yourself first.</p>${q.steps.map((h,i)=>`<details class="polya"><summary><span class="pstep">Step ${i+1}</span> ${PNAMES[i]}</summary><div class="prose">${h}</div></details>`).join('')}`;
+
+/* ---------- problem solving: a composite solid (base + tower + ramp). Coordinates are x across, y back from the front, z up. ---------- */
+ALL.park={id:'park',name:'Skate park model',W:8,D:6,H:6,
+  comp:{parts:[{y0:0,y1:2,poly:[[0,0],[8,0],[8,2],[4,5],[4,2],[0,2]]},{y0:2,y1:6,poly:[[0,0],[8,0],[8,2],[4,5],[4,6],[0,6]]}],
+    edges:[[0,0,0,8,0,0],[8,0,0,8,6,0],[8,6,0,0,6,0],[0,6,0,0,0,0],[0,0,0,0,0,2],[8,0,0,8,0,2],[8,6,0,8,6,2],[0,6,0,0,6,6],
+      [8,0,2,4,0,5],[4,0,5,4,0,2],[4,0,2,0,0,2],[8,6,2,4,6,5],[4,6,5,4,6,6],[4,6,6,0,6,6],[8,0,2,8,6,2],[4,0,5,4,6,5],
+      [4,2,2,4,2,6],[4,0,2,4,2,2],[0,0,2,0,2,2],[0,2,2,0,2,6],[0,2,2,4,2,2],[0,2,6,4,2,6],[4,2,6,4,6,6],[0,6,6,0,2,6]]},
+  front:{w:8,h:6,s:[{t:'poly',pts:[[0,0],[8,0],[8,2],[4,5],[4,6],[0,6]]},ln(0,2,4,2),ln(4,2,4,5)]},
+  plan:{w:8,h:6,s:[rect(8,6),ln(4,0,4,6),ln(0,2,4,2)]},
+  side:{w:6,h:6,s:[{t:'poly',pts:[[0,0],[6,0],[6,6],[2,6],[2,5],[0,5]]},ln(0,2,6,2),ln(2,5,6,5),ln(2,2,2,5,1)]}};
+function ppInit(){$('#pp-3d').innerHTML='<p class="muted">The 3D view is not available on this device. Use the three views.</p>';$('#pp-lay').innerHTML=layoutSVG(S('park'),false);}
+$('#pp-form').addEventListener('submit',e=>{e.preventDefault();const v=parseFloat($('#pp-in').value.replace(',','.')),fb=$('#pp-fb');fb.hidden=false;
+  if(isNaN(v)){fb.className='fb';fb.textContent='Type a number, then press Check.';return;}
+  const ok=Math.abs(v-196)<.011;fb.className='fb '+(ok?'ok':'no');
+  fb.innerHTML=ok?'<b>Correct!</b> The model has 196 cm³ of clay. Open the four steps to compare your method.':'<b>Not yet.</b> Open the steps below one at a time, then try again.';if(ok)party();});
+
+/* ---------- what stays the same and what changes: a ramp you can turn ---------- */
+const SS=[['Parallel',2,'<b>Parallel: look from the front.</b> The triangular face is parallel to the plane, so you see its true shape. It is 4 cm across and 3 cm high, and the sloping edge shows its true length of 5 cm.'],
+ ['Inclined',1,'<b>Inclined: look from the top.</b> The sloping face is tilted to the plane. Its 5 cm edge now looks only 4 cm long.'],
+ ['Perpendicular',3,'<b>Perpendicular: look from the side.</b> The 4 cm bottom edges point straight at you, so each one becomes a point. The flat base becomes a straight line.']];
+function ssInit(){$('#ss-3d').innerHTML=isoSVG(S('ramp4'));
+  $('#ss-pick').innerHTML=SS.map((x,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="false">${x[0]}</button>`).join('');
+  $('#ss-cap').innerHTML='<b>Choose a case.</b> Watch what happens to the 5 cm sloping edge as the ramp turns.';}
+$('#ss-pick').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;const x=SS[+b.dataset.i],v=$('#ss-3d')._v;
+  $$('#ss-pick .chip').forEach(c=>c.setAttribute('aria-pressed',c===b));$('#ss-cap').innerHTML=x[2];
+  if(v){v.yaw=SNAPS[x[1]][1];v.pitch=SNAPS[x[1]][2];draw3(v);}});
+
+/* ---------- read the views back into a solid, in 3D ---------- */
+let RB='lblock';
+const polyArea=p=>Math.abs(p.reduce((t,a,i)=>{const b=p[(i+1)%p.length];return t+a[0]*b[1]-b[0]*a[1];},0))/2;
+function pushGroup(s,d){d=Math.max(d,.03);const g=new THREE.Group(),geo=new THREE.ExtrudeGeometry(new THREE.Shape(s.poly.map(p=>new THREE.Vector2(p[0],p[1]))),{depth:d,bevelEnabled:false});
+  geo.translate(-s.W/2,-s.H/2,s.D/2-d);g.add(new THREE.Mesh(geo,V3.mat));g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,20),V3.lmat));return g;}
+function rbDraw(){const s=S(RB),d=+$('#rb-d').value,A=polyArea(s.poly);$('#rb-dv').textContent=d+' cm';
+  $('#rb-cap').innerHTML=d===0?`<b>Start with the front elevation.</b> It is a flat shape with area ${A} cm². It has no width yet.`
+    :d<s.D?`<b>Pushed back ${d} cm.</b> Volume so far = ${A} × ${d} = ${A*d} cm³. The plan shows a width of ${s.D} cm, so keep going.`
+    :`<b>Pushed back ${s.D} cm, the width shown in the plan.</b> The solid now matches all three views. Volume = ${A} × ${s.D} = ${A*s.D} cm³.`;
+  const el=$('#rb-3d'),v=el&&el._v;if(!v)return;try{v.group=pushGroup(s,d);draw3(v);}catch(e){}}
+function renderRB(){const s=S(RB);
+  $('#rb-pick').innerHTML=SOLIDS.filter(x=>x.poly).map(x=>`<button type="button" class="chip" data-id="${x.id}" aria-pressed="${x.id===RB}">${x.name}</button>`).join('');
+  $('#rb-lay').innerHTML=layoutSVG(s,false);$('#rb-host').innerHTML=`<div class="v3" data-solid="${s.id}" id="rb-3d">${isoSVG(s)}</div>`;
+  const r=$('#rb-d');r.max=s.D;r.value=s.D;rbDraw();}
+$('#rb-pick').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b){RB=b.dataset.id;renderRB();}});
+$('#rb-d').addEventListener('input',rbDraw);
+
+/* ---------- animated drawing tutorial (notes: how to draw the three views) ---------- */
+const TSTEPS=[
+ ['Draw the front elevation','Start with the view from the front. Use the true length and the true height.'],
+ ['Project downwards','Draw thin lines straight down from every corner of the front elevation.'],
+ ['Draw the plan','Leave a gap, then draw the plan directly below. Its length matches the front elevation. Its other side is the width of the solid.'],
+ ['Draw the 45° line','Draw a 45° line in the corner next to the plan.'],
+ ['Find the side elevation','Project the plan across to the 45° line, then turn and go straight up. Project the heights across from the front elevation. The side elevation sits where the lines cross.'],
+ ['Go over the edges','Use thick solid lines for edges you can see and dashed lines for hidden edges. Keep the thin construction lines.'],
+ ['Label and measure','Name each view and write the lengths. The drawing is complete.']];
+let T={id:'lblock',st:1,timer:null};
+function tutSVG(s,st){const u=20,g=2,{W,D,H}=s,L=1,Tp=2,cols=L+D+g+W+1,rows=Tp+H+g+D+2,X=x=>(L+x)*u,Y=y=>(Tp+y)*u;let n=0;
+  const cl=(k,a,b,c,d)=>`<line class="cl${st===k?' tdraw':''}"${st===k?` pathLength="1" style="animation-delay:${(n++*.12).toFixed(2)}s"`:''} x1="${a}" y1="${b}" x2="${c}" y2="${d}"/>`;
+  const view=(k,v,ox,oy)=>{const fin=st>=6,nw=st===k,c='edge'+(fin?'':' pen')+(nw?' tdraw':'')+(st===6?' tfade':''),pl=(nw?' pathLength="1"':'')+(nw&&k===5?' style="animation-delay:.9s"':''),PX=x=>ox+x*u,PY=y=>oy+(v.h-y)*u;
+    return v.s.map(e=>e.t==='poly'?`<polygon${pl} class="${c}" points="${e.pts.map(p=>PX(p[0])+','+PY(p[1])).join(' ')}"/>`
+      :e.t==='circle'?`<circle${pl} class="${c}" cx="${PX(e.cx)}" cy="${PY(e.cy)}" r="${e.r*u}"/>`
+      :`<line${pl} class="${c}${fin&&e.dash?' hid':''}" x1="${PX(e.p[0])}" y1="${PY(e.p[1])}" x2="${PX(e.p[2])}" y2="${PY(e.p[3])}"/>`).join('');};
+  const xs=uniq(s.cyl?[0,W]:s.poly.map(p=>p[0])),zs=uniq(s.cyl?[0,H]:s.poly.map(p=>p[1]));
+  let o=grid(cols,rows,u);
+  if(st>=2)xs.forEach(x=>{o+=cl(2,X(D+g+x),Y(H),X(D+g+x),Y(H+g+D));});
+  if(st>=4)o+=`<line class="c45${st===4?' tfade':''}" x1="${X(D+g/2+.6)}" y1="${Y(H+g/2-.6)}" x2="${X(-.4)}" y2="${Y(H+g+D+.4)}"/>`;
+  if(st>=5){[0,D].forEach(y=>{const yp=H+g+D-y;o+=cl(5,X(D+g),Y(yp),X(y),Y(yp))+cl(5,X(y),Y(yp),X(y),Y(0));});zs.forEach(z=>{o+=cl(5,X(D+g),Y(H-z),X(0),Y(H-z));});}
+  o+=view(1,s.front,X(D+g),Y(0));
+  if(st>=3)o+=view(3,s.plan,X(D+g),Y(H+g));
+  if(st>=5)o+=view(5,s.side,X(0),Y(0));
+  if(st>=7){const f=st===7?' tfade':'',tx=(t,x,y)=>`<text class="vlbl${f}" x="${X(x)}" y="${Y(y)}" text-anchor="middle">${t}</text>`,
+      dim=(t,x,y,r)=>`<text class="svgtxt${f}" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle"${r?` transform="rotate(-90 ${x} ${y})"`:''}>${t}</text>`;
+    o+=tx('SIDE ELEVATION',D/2,-.6)+tx('FRONT ELEVATION',D+g+W/2,-.6)+tx('PLAN',D+g+W/2,H+g+D+1.7)
+      +dim(W+' cm',X(D+g+W/2),Y(H+g+D+.7))+dim(H+' cm',X(D+g+W)+11,Y(H/2),1)+dim(D+' cm',X(D+g+W)+11,Y(H+g+D/2),1);}
+  return `<svg class="dwg" viewBox="0 0 ${cols*u} ${rows*u}" width="${cols*u}" height="${rows*u}" role="img" aria-label="Step ${st} of 7 in drawing the three views of the ${s.name}">${o}</svg>`;}
+const tutStop=()=>{clearInterval(T.timer);T.timer=null;};
+function renderTut(full){const s=S(T.id),c=TSTEPS[T.st-1];
+  if(full){$('#tut-pick').innerHTML=SOLIDS.map(x=>`<button type="button" class="chip" data-id="${x.id}" aria-pressed="${x.id===T.id}">${x.name}</button>`).join('');$('#tut-iso').innerHTML=v3(s);}
+  $('#tut-dwg').innerHTML=tutSVG(s,T.st);$('#tut-cap').innerHTML=`<b>Step ${T.st}. ${c[0]}.</b> ${c[1]}`;
+  $('#tut-n').textContent=`Step ${T.st} of 7`;$('#tut-back').disabled=T.st<=1;$('#tut-next').disabled=T.st>=7;
+  $('#tut-play').textContent=T.timer?'Pause':T.st>=7?'Play again':'Play';}
+$('#tut-pick').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b)return;tutStop();T.id=b.dataset.id;T.st=1;renderTut(true);});
+$('#tut-back').addEventListener('click',()=>{tutStop();T.st=Math.max(1,T.st-1);renderTut();});
+$('#tut-next').addEventListener('click',()=>{tutStop();T.st=Math.min(7,T.st+1);renderTut();});
+$('#tut-play').addEventListener('click',()=>{if(T.timer){tutStop();renderTut();return;}
+  if(T.st>=7)T.st=1;T.timer=setInterval(()=>{T.st++;if(T.st>=7)tutStop();renderTut();},2800);renderTut();});
+$('#tut-try').addEventListener('click',()=>{tutStop();renderTut();startSet('draw');});
+
+const FUNC=['--yellow','--pink','--mint','--sky','--grape'];
+function party(){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
+  const c=document.createElement('div');c.className='party';c.setAttribute('aria-hidden','true');
+  for(let i=0;i<40;i++){const b=document.createElement('i');b.style.cssText=`left:${Math.random()*100}%;background:var(${FUNC[i%5]});animation-delay:${(Math.random()*.7).toFixed(2)}s;animation-duration:${(1.6+Math.random()*1.4).toFixed(2)}s`;c.append(b);}
+  document.body.append(c);setTimeout(()=>c.remove(),4200);}
+/* ---------- entry screen: name and class are required before the app opens ---------- */
+const APP=[$('header.top'),$('nav.tabs'),$('main')];
+const tidy=v=>v.trim().replace(/\s+/g,' ');
+function setWho(){$('#who').textContent=[store.name,store.cls].map(v=>tidy(v||'')).filter(Boolean).join(' · ');}
+function showGate(){APP.forEach(e=>{e.hidden=true;});$('#gate').hidden=false;$('#g-name').value=store.name||'';$('#g-class').value=store.cls||'';$('#g-err').hidden=true;window.scrollTo(0,0);}
+function enterApp(){$('#gate').hidden=true;APP.forEach(e=>{e.hidden=false;});$('#stu-name').value=store.name;$('#stu-class').value=store.cls;setWho();window.scrollTo(0,0);}
+$('#g-form').addEventListener('submit',e=>{e.preventDefault();const n=tidy($('#g-name').value),c=tidy($('#g-class').value),err=$('#g-err');
+  if(n.length<2||!c){err.textContent=n.length<2?'Type your name to continue.':'Type your class to continue.';err.hidden=false;(n.length<2?$('#g-name'):$('#g-class')).focus();return;}
+  store.name=n;store.cls=c;save();enterApp();});
+
+renderEx();renderTut(true);renderRB();ssInit();ppInit();syncReads();startSet('concept');quizHome();renderScore();route();scan();renderBuild();showGate();
+new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
+</script>
+
+
+</body></html>
