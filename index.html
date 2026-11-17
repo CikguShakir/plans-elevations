@@ -223,6 +223,41 @@ input[type=text]{border:2.5px solid var(--edge);border-radius:12px}
 .tag{border-radius:999px;padding:3px 10px}
 .gate .scene{--s:84px;margin:22px auto 14px}
 .gate .sheet{padding:26px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cs-launch{position:fixed;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:16;display:flex;align-items:center;gap:8px;font:700 15px var(--display);padding:5px 14px 5px 5px;border-radius:999px;border:2.5px solid var(--edge);background:var(--yellow);color:var(--on-bright);box-shadow:0 4px 0 var(--edge);cursor:pointer}
+.cs-launch:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.cs-av{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:10px;border:2.5px solid var(--edge);background:var(--pink);color:var(--on-bright);font:800 14px var(--display);transform:rotate(-6deg)}
+.cs-panel{position:fixed;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:17;width:min(400px,calc(100vw - 28px));height:min(580px,calc(100vh - 110px));display:flex;flex-direction:column;background:var(--sheet);border:3px solid var(--edge);border-radius:22px;box-shadow:0 8px 0 var(--edge);overflow:hidden}
+.cs-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--mint);color:var(--on-bright);border-bottom:3px solid var(--edge)}
+.cs-head>div{min-width:0}
+.cs-head b{font:800 19px var(--display);display:block;line-height:1.1}
+.cs-head small{font-size:12px;font-weight:700}
+.cs-x{margin-left:auto;width:34px;height:34px;flex:none;border-radius:10px;border:2.5px solid var(--edge);background:var(--sheet);color:var(--ink);font:800 16px var(--display);cursor:pointer}
+.cs-log{flex:1;min-height:0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--paper)}
+.cs-msg{max-width:86%;padding:9px 12px;border-radius:16px;border:2px solid var(--edge);font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.cs-msg.t{align-self:flex-start;background:var(--sheet);border-bottom-left-radius:4px}
+.cs-msg.s{align-self:flex-end;background:var(--blue-soft);border-bottom-right-radius:4px}
+.cs-msg p{margin:0}.cs-msg p+p{margin-top:6px}
+.cs-msg ul,.cs-msg ol{margin:6px 0 0;padding-left:20px}
+.cs-cut,.cs-note{font-size:12px;color:var(--ink-soft)}
+.cs-note{align-self:center;text-align:center;max-width:90%}
+.cs-sugg{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 0;background:var(--sheet)}
+.cs-sugg button{font:700 13px var(--body);padding:4px 10px;border-radius:999px;border:2px solid var(--edge);background:var(--sheet);color:var(--ink);cursor:pointer}
+.cs-form{display:flex;gap:8px;align-items:flex-end;padding:10px 12px 12px;background:var(--sheet)}
+.cs-form textarea{flex:1;min-width:0;resize:none;font:15px/1.4 var(--body);color:var(--ink);background:var(--sheet);border:2.5px solid var(--edge);border-radius:12px;padding:8px 10px;max-height:110px}
+.cs-form .btn{padding:6px 14px;font-size:15px}
+.typing i{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--ink-soft)}
+@keyframes blink{50%{opacity:.2}}
+@media (prefers-reduced-motion:no-preference){.typing i{animation:blink 1.1s infinite}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}}
+@media (max-width:520px){.snd span{display:none}.cs-panel{height:calc(100vh - 100px)}}
+.snd{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:15;display:flex;gap:8px}
+.snd button{display:flex;align-items:center;gap:6px;font:700 14px var(--display);padding:7px 12px;border-radius:999px;border:2.5px solid var(--edge);background:var(--sheet);color:var(--ink);box-shadow:0 4px 0 var(--edge);cursor:pointer}
+.snd button[aria-pressed="true"]{background:var(--mint);color:var(--on-bright)}
+#snd-music[aria-pressed="true"]{background:var(--pink)}
+.snd button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.snd svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.snd button[aria-pressed="true"] .off,.snd button[aria-pressed="false"] .on{display:none}
+main .wrap{padding-bottom:96px}
 details.polya{border:2.5px solid var(--edge);border-radius:16px;box-shadow:0 4px 0 var(--edge);padding:12px 16px;background:var(--sheet)}
 details.polya summary{font:700 18px var(--display);cursor:pointer}
 details.polya[open] summary{margin-bottom:10px}
@@ -574,6 +609,26 @@ input[type=range]{accent-color:var(--accent);flex:1;min-width:160px;max-width:32
 
 </div></main>
 
+<div class="cs" id="cs" hidden>
+  <button type="button" class="cs-launch" id="cs-launch" aria-expanded="false" aria-controls="cs-panel"><span class="cs-av" aria-hidden="true">CS</span><span>Tanya Cikgu Shakir</span></button>
+  <section class="cs-panel" id="cs-panel" role="dialog" aria-label="Chat dengan Cikgu Shakir" hidden>
+    <div class="cs-head"><span class="cs-av" aria-hidden="true">CS</span><div><b>Cikgu Shakir</b><small id="cs-status">Sedang bersedia...</small></div><button type="button" class="cs-x" id="cs-x" aria-label="Tutup chat">✕</button></div>
+    <div class="cs-log" id="cs-log" aria-live="polite"></div>
+    <div class="cs-sugg" id="cs-sugg">
+      <button type="button" data-q="Apa beza pelan, dongakan depan dan dongakan sisi?">Apa itu pelan?</button>
+      <button type="button" data-q="Bagaimana cara guna garis 45° untuk lukis dongakan sisi?">Garis 45°</button>
+      <button type="button" data-q="Bila saya perlu guna garis sempang?">Garis sempang</button>
+      <button type="button" data-q="Tolong saya selesaikan soalan isi padu guna model Polya.">Soalan isi padu</button>
+    </div>
+    <form class="cs-form" id="cs-form"><label for="cs-in" class="sr">Soalan anda</label><textarea id="cs-in" rows="1" maxlength="1000" placeholder="Taip soalan anda..."></textarea><button type="submit" class="btn" id="cs-send">Hantar</button><button type="button" class="btn ghost" id="cs-stop" hidden>Henti</button></form>
+  </section>
+</div>
+
+<div class="snd" role="group" aria-label="Sound settings">
+  <button type="button" id="snd-music" aria-pressed="true" title="Turn background music on or off"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><line class="off" x1="3" y1="3" x2="21" y2="21"/></svg><span>Music</span></button>
+  <button type="button" id="snd-fx" aria-pressed="true" title="Turn click sounds on or off"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><line class="off" x1="16" y1="9" x2="22" y2="15"/><line class="off" x1="22" y1="9" x2="16" y2="15"/></svg><span>Sounds</span></button>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -587,6 +642,62 @@ let store=blank();
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)store=Object.assign(blank(),s);}catch(e){}
 store.practice=Object.assign(blank().practice,store.practice||{});
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}};
+
+/* ---------- sound: click effects and background music, made live with Web Audio (no sound files) ---------- */
+const SKEY='pe-sound-v1',SND={ctx:null,fx:true,music:true,started:false,timer:null,next:0,step:0};
+try{const p=JSON.parse(localStorage.getItem(SKEY)||'null');if(p){SND.fx=p.fx!==false;SND.music=p.music!==false;}}catch(e){}
+const sndSave=()=>{try{localStorage.setItem(SKEY,JSON.stringify({fx:SND.fx,music:SND.music}));}catch(e){}};
+function ac(){if(!SND.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
+    try{const c=new C();SND.ctx=c;SND.fxBus=c.createGain();SND.fxBus.gain.value=.55;SND.fxBus.connect(c.destination);SND.musBus=c.createGain();SND.musBus.gain.value=.16;SND.musBus.connect(c.destination);}catch(e){return null;}}
+  if(SND.ctx.state==='suspended'){try{SND.ctx.resume();}catch(e){}}return SND.ctx;}
+function tone(f,at,dur,type,vol,f2,bus){const c=SND.ctx;if(!c)return;const t=Math.max(at,c.currentTime),o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.2,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(bus||SND.fxBus);o.start(t);o.stop(t+dur+.05);}
+const N=m=>440*Math.pow(2,(m-69)/12);
+const SFX={
+ pop:t=>tone(520,t,.09,'triangle',.22,900),
+ tab:t=>{tone(N(76),t,.09,'square',.07);tone(N(83),t+.06,.12,'square',.06);},
+ flip:t=>tone(300,t,.12,'triangle',.18,620),
+ tick:t=>tone(1200,t,.04,'square',.05),
+ ding:t=>{tone(N(84),t,.25,'sine',.22);tone(N(91),t+.07,.3,'sine',.14);},
+ right:t=>[72,76,79,84].forEach((m,i)=>tone(N(m),t+i*.075,.2,'triangle',.2)),
+ wrong:t=>{tone(N(52),t,.16,'sawtooth',.09,N(49));tone(N(47),t+.15,.26,'sawtooth',.09,N(44));},
+ dot:t=>tone(N(84),t,.06,'sine',.18),
+ line:t=>tone(N(72),t,.14,'triangle',.18,N(79)),
+ stack:(t,h)=>tone(N(60+h*4),t,.12,'triangle',.22,N(64+h*4)),
+ unstack:(t,h)=>tone(N(68+h*4),t,.12,'triangle',.2,N(60+h*4)),
+ nope:t=>tone(160,t,.08,'square',.06),
+ slide:(t,v)=>tone(N(64+v*3),t,.06,'sine',.12),
+ start:t=>[60,64,67,72,76].forEach((m,i)=>tone(N(m),t+i*.07,.22,'triangle',.18)),
+ done:t=>[67,64,60].forEach((m,i)=>tone(N(m),t+i*.12,.25,'triangle',.16)),
+ fanfare:t=>{[60,64,67,72].forEach((m,i)=>tone(N(m),t+i*.1,.18,'square',.08));tone(N(76),t+.42,.5,'square',.09);tone(N(79),t+.42,.5,'triangle',.12);tone(N(84),t+.42,.6,'sine',.12);}
+};
+let lastSlide=0;
+function play(name,arg){if(!SND.fx||!SFX[name])return;
+  if(name==='slide'){const n=performance.now();if(n-lastSlide<60)return;lastSlide=n;}
+  const c=ac();if(!c)return;try{SFX[name](c.currentTime+.005,arg||0);}catch(e){}}
+/* background music: a bright 4-bar loop (C, G, Am, F) with two melodies that take turns */
+const EIGHTH=60/112/2,CH=[[60,64,67],[59,62,67],[57,60,64],[57,60,65]],BASS=[36,43,45,41],ARP=[0,1,2,1,0,1,2,1];
+const MEL=[[79,0,76,0,79,0,84,0,83,0,79,0,74,0,79,0,81,0,76,0,72,0,76,0,77,0,81,0,84,0,81,0],
+           [76,0,79,0,84,0,79,0,79,0,83,0,86,0,83,0,84,0,81,0,76,0,81,0,81,0,77,0,72,0,0,0]];
+function musicTick(){const c=SND.ctx;if(!c)return;
+  while(SND.next<c.currentTime+.35){const s=SND.step%32,b=s>>3,i=s&7,t=SND.next,M=SND.musBus,m=MEL[(SND.step>>5)%2][s];
+    tone(N(CH[b][ARP[i]]),t,.22,'triangle',.22,0,M);
+    if(i===0||i===4)tone(N(BASS[b]),t,.42,'sine',.5,0,M);
+    if(m){tone(N(m),t,.38,'sine',.2,0,M);tone(N(m),t,.3,'square',.04,0,M);}
+    if(i%2)tone(6000,t,.03,'square',.02,0,M);
+    SND.next+=EIGHTH;SND.step++;}}
+function musicOn(){if(SND.timer||!SND.music)return;const c=ac();if(!c)return;SND.next=c.currentTime+.08;SND.step=0;SND.timer=setInterval(musicTick,90);musicTick();}
+function musicOff(){clearInterval(SND.timer);SND.timer=null;}
+function sndUI(){$('#snd-fx').setAttribute('aria-pressed',SND.fx);$('#snd-music').setAttribute('aria-pressed',SND.music);}
+$('#snd-fx').addEventListener('click',()=>{SND.fx=!SND.fx;sndSave();sndUI();play('pop');});
+$('#snd-music').addEventListener('click',()=>{SND.music=!SND.music;sndSave();sndUI();if(SND.music){SND.started=true;musicOn();}else musicOff();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)musicOff();else if(SND.started)musicOn();});
+/* a sound for every button, tab and step; the ones that judge an answer play their own sound */
+document.addEventListener('click',e=>{const el=e.target.closest('button,a,summary');if(!el||el.disabled||el.closest('.opt,[type=submit],#d-check,#b-grid,.snd'))return;
+  play(el.closest('nav.tabs')?'tab':el.tagName==='SUMMARY'?'flip':'pop');},true);
+document.addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]'))play(e.target.checked?'ding':'tick');});
 
 /* ---------- solids ---------- */
 const rect=(w,h)=>({t:'poly',pts:[[0,0],[w,0],[w,h],[0,h]]});
@@ -724,9 +835,9 @@ function mcq(host,q,{practice,onPick}){
   host.innerHTML=`<p class="qtext">${q.q}</p>${figHTML(q)}<div class="opts${q.vis?' vis':''}">${order.map((i,k)=>`<button type="button" class="opt" data-i="${i}"><span class="key">${'ABCD'[k]}</span><span>${q.o[i]}</span></button>`).join('')}</div><div class="fb" hidden></div>`;
   const btns=$$('.opt',host),fb=$('.fb',host);
   btns.forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
-    if(practice){btns.forEach(x=>{x.disabled=true;if(+x.dataset.i===0)x.classList.add('right');});if(i!==0)b.classList.add('wrong');
+    if(practice){play(i===0?'right':'wrong');btns.forEach(x=>{x.disabled=true;if(+x.dataset.i===0)x.classList.add('right');});if(i!==0)b.classList.add('wrong');
       fb.hidden=false;fb.className='fb '+(i===0?'ok':'no');fb.innerHTML=`<b>${i===0?'Correct.':'Not quite.'}</b> ${q.why}`;}
-    else{btns.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
+    else{play('pop');btns.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');}
     onPick(i);}));}
 function numq(host,q,onDone){
   host.innerHTML=`<p class="qtext">${q.q}</p>${figHTML(q)}<form class="numf"><label for="num-in">Your answer</label><input type="text" id="num-in" inputmode="decimal" autocomplete="off"><span>${q.unit}</span><button class="btn" type="submit">Check</button></form><div class="fb" hidden></div>`;
@@ -734,7 +845,7 @@ function numq(host,q,onDone){
   f.addEventListener('submit',e=>{e.preventDefault();const v=parseFloat(inp.value.replace(',','.'));fb.hidden=false;
     if(isNaN(v)){fb.className='fb';fb.textContent='Type a number, then press Check.';return;}
     const ok=Math.abs(v-q.n)<0.011;fb.className='fb '+(ok?'ok':'no');fb.innerHTML=`<b>${ok?'Correct.':'Not quite. The answer is '+q.n+' '+q.unit+'.'}</b> ${q.why}`;
-    inp.disabled=true;$('button',f).disabled=true;onDone(ok);});}
+    play(ok?'right':'wrong');inp.disabled=true;$('button',f).disabled=true;onDone(ok);});}
 
 /* ---------- practice ---------- */
 let P={set:'concept',list:[],i:0,a:0,c:0};
@@ -776,14 +887,14 @@ function startDraw(t){B={task:t,segs:[],start:null,dash:false,scored:false};setS
   $('#d-prompt').innerHTML=`Draw the <b>${VN[t.k]}</b> of this ${t.s.name.toLowerCase()}, as seen from ${VDIR[t.k]}. Use a dashed line for any hidden edge.`;
   $('#d-iso').innerHTML=v3(t.s);$('#d-fb').hidden=true;renderBoard();}
 function setStyle(d){B.dash=d;$('#d-solid').setAttribute('aria-pressed',!d);$('#d-dash').setAttribute('aria-pressed',d);}
-$('#board').addEventListener('click',e=>{const c=e.target.closest('[data-p]');if(!c)return;const p=c.dataset.p.split(',').map(Number);
+$('#board').addEventListener('click',e=>{const c=e.target.closest('[data-p]');if(!c)return;play(B.start?'line':'dot');const p=c.dataset.p.split(',').map(Number);
   if(!B.start)B.start=p;else{if(p[0]!==B.start[0]||p[1]!==B.start[1])B.segs.push([B.start[0],B.start[1],p[0],p[1],B.dash]);B.start=null;}renderBoard();});
 $('#d-solid').addEventListener('click',()=>setStyle(false));$('#d-dash').addEventListener('click',()=>setStyle(true));
 $('#d-undo').addEventListener('click',()=>{if(B.start)B.start=null;else B.segs.pop();renderBoard();});
 $('#d-clear').addEventListener('click',()=>{B.segs=[];B.start=null;renderBoard();});
 $('#d-check').addEventListener('click',()=>{const fb=$('#d-fb'),t=B.task,v=t.s[t.k];fb.hidden=false;
   if(!B.segs.length){fb.className='fb';fb.textContent='Draw some lines first.';return;}
-  const mine=B.segs.map(s=>[s[0],-s[1],s[2],-s[3],s[4]]),ans=viewSegs(v),ok=canon(mine)===canon(ans);
+  const mine=B.segs.map(s=>[s[0],-s[1],s[2],-s[3],s[4]]),ans=viewSegs(v),ok=canon(mine)===canon(ans);play(ok?'right':'wrong');
   if(!B.scored){B.scored=true;record('draw',ok);}
   if(ok){fb.className='fb ok';fb.innerHTML=`<b>Correct.</b> ${t.s.note}`;}
   else if(canon(mine,true)===canon(ans,true)){fb.className='fb no';fb.innerHTML='<b>Nearly.</b> The lines are in the right places. Check which edges are visible (solid) and which are hidden (dashed).';}
@@ -801,7 +912,7 @@ function quizQ(){const c=$('#q-card'),last=Q.i===QN-1;
   mcq($('#q-host'),Q.qs[Q.i],{practice:false,onPick:i=>{Q.ans[Q.i]=i;$('#q-next').disabled=false;}});
   $('#q-next').addEventListener('click',()=>{Q.i++;if(Q.i<QN)quizQ();else quizEnd();$('#v-quiz').scrollIntoView({block:'start'});});}
 function quizEnd(){clearInterval(qTimer);const secs=Math.round((Date.now()-Q.t0)/1000),score=Q.ans.filter(a=>a===0).length,pct=Math.round(score/QN*100);
-  store.quizzes.push({d:Date.now(),score,total:QN,secs});save();renderScore();if(pct>=70)party();
+  store.quizzes.push({d:Date.now(),score,total:QN,secs});save();renderScore();if(pct>=70)party();else play('done');
   const msg=pct>=85?'Excellent! You have mastered this chapter.':pct>=70?'Good work. Review the questions you missed.':pct>=50?'Getting there. Go through the notes again, then retry.':'Read the notes and try the practice before the next attempt.';
   $('#q-card').innerHTML=`<h2>Your result</h2><div class="row" style="align-items:baseline"><span class="big">${score}/${QN}</span><span class="meta">${pct}% · time ${fmt(secs)}</span></div><p>${msg}</p><div class="row"><button type="button" class="btn" id="q-again">Try another quiz</button><a class="btn ghost" href="#score" style="text-decoration:none">See my scores</a></div><h3>Review</h3><div class="review">${Q.qs.map((q,i)=>{const ok=Q.ans[i]===0;
     return `<div><span class="tag ${ok?'ok':'no'}">Q${i+1} · ${ok?'correct':'wrong'}</span><p class="qtext">${q.q}</p>${figHTML(q)}${ok?'':`<p class="ans">Your answer: ${q.o[Q.ans[i]]}</p>`}<p class="ans">Correct answer: ${q.o[0]}</p><p class="muted">${q.why}</p></div>`;}).join('')}</div>`;
@@ -894,7 +1005,7 @@ function renderBuild(){let o='',n=0;
   $('#b-views').innerHTML=[['Plan (from the top)',plan],['Front elevation',front],['Side elevation (from the right)',side]].map(a=>`<figure><div class="panel">${viewSVG(a[1],18)}</div><figcaption>${a[0]}</figcaption></figure>`).join('');
   const v=$('#b-3d')._v;if(v){v.solid=buildSolid();v.group=buildGroup(v.solid);draw3(v);}}
 $('#b-grid').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c.split(',').map(Number);
-  Bh[c[0]][c[1]]=Math.max(0,Math.min(4,Bh[c[0]][c[1]]+Bmode));renderBuild();});
+  const h0=Bh[c[0]][c[1]],h1=Math.max(0,Math.min(4,h0+Bmode));Bh[c[0]][c[1]]=h1;play(h1===h0?'nope':Bmode>0?'stack':'unstack',h1);renderBuild();});
 const setMode=m=>{Bmode=m;$('#b-add').setAttribute('aria-pressed',m===1);$('#b-rem').setAttribute('aria-pressed',m===-1);};
 $('#b-add').addEventListener('click',()=>setMode(1));$('#b-rem').addEventListener('click',()=>setMode(-1));
 $('#b-clear').addEventListener('click',()=>{Bh=Bh.map(c=>c.map(()=>0));renderBuild();});
@@ -956,7 +1067,7 @@ function ppInit(){$('#pp-3d').innerHTML='<p class="muted">The 3D view is not ava
 $('#pp-form').addEventListener('submit',e=>{e.preventDefault();const v=parseFloat($('#pp-in').value.replace(',','.')),fb=$('#pp-fb');fb.hidden=false;
   if(isNaN(v)){fb.className='fb';fb.textContent='Type a number, then press Check.';return;}
   const ok=Math.abs(v-196)<.011;fb.className='fb '+(ok?'ok':'no');
-  fb.innerHTML=ok?'<b>Correct!</b> The model has 196 cm³ of clay. Open the four steps to compare your method.':'<b>Not yet.</b> Open the steps below one at a time, then try again.';if(ok)party();});
+  fb.innerHTML=ok?'<b>Correct!</b> The model has 196 cm³ of clay. Open the four steps to compare your method.':'<b>Not yet.</b> Open the steps below one at a time, then try again.';if(ok)party();else play('wrong');});
 
 /* ---------- what stays the same and what changes: a ramp you can turn ---------- */
 const SS=[['Parallel',2,'<b>Parallel: look from the front.</b> The triangular face is parallel to the plane, so you see its true shape. It is 4 cm across and 3 cm high, and the sloping edge shows its true length of 5 cm.'],
@@ -984,7 +1095,7 @@ function renderRB(){const s=S(RB);
   $('#rb-lay').innerHTML=layoutSVG(s,false);$('#rb-host').innerHTML=`<div class="v3" data-solid="${s.id}" id="rb-3d">${isoSVG(s)}</div>`;
   const r=$('#rb-d');r.max=s.D;r.value=s.D;rbDraw();}
 $('#rb-pick').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b){RB=b.dataset.id;renderRB();}});
-$('#rb-d').addEventListener('input',rbDraw);
+$('#rb-d').addEventListener('input',()=>{rbDraw();play('slide',+$('#rb-d').value);});
 
 /* ---------- animated drawing tutorial (notes: how to draw the three views) ---------- */
 const TSTEPS=[
@@ -1029,21 +1140,129 @@ $('#tut-play').addEventListener('click',()=>{if(T.timer){tutStop();renderTut();r
 $('#tut-try').addEventListener('click',()=>{tutStop();renderTut();startSet('draw');});
 
 const FUNC=['--yellow','--pink','--mint','--sky','--grape'];
-function party(){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
+function party(){play('fanfare');try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
   const c=document.createElement('div');c.className='party';c.setAttribute('aria-hidden','true');
   for(let i=0;i<40;i++){const b=document.createElement('i');b.style.cssText=`left:${Math.random()*100}%;background:var(${FUNC[i%5]});animation-delay:${(Math.random()*.7).toFixed(2)}s;animation-duration:${(1.6+Math.random()*1.4).toFixed(2)}s`;c.append(b);}
   document.body.append(c);setTimeout(()=>c.remove(),4200);}
+/* ---------- Cikgu Shakir: chat helper. Real AI where the page runs inside Claude; built-in basic answers anywhere else (e.g. GitHub Pages). ---------- */
+const CS={open:false,busy:false,ctl:null,turns:[],ai:undefined};
+const csAI=(window.claude&&typeof window.claude.use==='function')?window.claude.use('sample').catch(()=>null):Promise.resolve(null);
+csAI.then(f=>{if(CS.ai===undefined)csSetAI(f);});
+function csSetAI(f){CS.ai=f||webAI||null;CS.kind=f?'claude':webAI?'web':null;csStatus();}
+const CS_OFF=['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'];
+const CS_ERR={rate_limited:'Terlalu banyak soalan dalam masa singkat. Tunggu sebentar, kemudian cuba lagi.',
+  session_expired:'Sila log masuk semula ke Claude, kemudian cuba lagi.',
+  refused:'Cikgu Shakir tidak dapat menjawab soalan itu. Cuba tanya soalan Matematik dengan cara lain.',
+  prompt_too_large:'Perbualan sudah terlalu panjang. Muat semula halaman untuk mula semula.',
+  empty_completion:'Cikgu Shakir tidak memberi jawapan. Cuba tanya dengan cara lain.',
+  daily_limit:'Kuota chat AI percuma untuk hari ini sudah habis, jadi Cikgu Shakir menjawab dalam mod asas. Chat AI dibuka semula pada pukul 8 pagi.',
+  forbidden:'Chat AI belum disediakan dengan betul. Beritahu cikgu anda.',
+  not_configured:'Chat AI belum disediakan dengan betul. Beritahu cikgu anda.',
+  upstream_error:'Sambungan terputus. Tekan Hantar untuk mencuba sekali lagi.'};
+const TABN={notes:'Notes',practice:'Practice',quiz:'Quiz',score:'Score'};
+/* GitHub Pages: paste the Cloudflare Worker address between the quotes to switch on the AI chat there. Leave it empty for basic mode. */
+const CS_API='';
+const webAI=CS_API?async(turns,o)=>{let r,j={};
+  try{r=await fetch(CS_API,{method:'POST',headers:{'Content-Type':'application/json'},signal:o.signal,
+    body:JSON.stringify({messages:turns,name:tidy(store.name||''),cls:tidy(store.cls||''),tab:TABN[location.hash.slice(1)]||'Notes'})});}
+  catch(e){throw {code:o.signal&&o.signal.aborted?'cancelled':'upstream_error'};}
+  try{j=await r.json();}catch(e){}
+  if(!r.ok||j.error||!j.text)throw {code:j.error||'upstream_error'};
+  return {text:j.text,truncated:!!j.truncated};}:null;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function md(t){let o='',list=null;const close=()=>{if(list){o+=`</${list}>`;list=null;}};
+  for(const raw of esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split('\n')){let l=raw.trim(),m;
+    if((m=l.match(/^#+\s*(.*)/)))l='<b>'+m[1]+'</b>';
+    if((m=l.match(/^[-*•]\s+(.*)/))){if(list!=='ul'){close();o+='<ul>';list='ul';}o+=`<li>${m[1]}</li>`;}
+    else if((m=l.match(/^\d+[.)]\s+(.*)/))){if(list!=='ol'){close();o+='<ol>';list='ol';}o+=`<li>${m[1]}</li>`;}
+    else{close();if(l)o+=`<p>${l}</p>`;}}
+  close();return o;}
+const csScroll=()=>{const l=$('#cs-log');l.scrollTop=l.scrollHeight;};
+function csMsg(cls,html){const d=document.createElement('div');d.className='cs-msg '+cls;d.innerHTML=html;$('#cs-log').append(d);csScroll();return d;}
+function csNote(t){const d=document.createElement('p');d.className='cs-note';d.textContent=t;$('#cs-log').append(d);csScroll();}
+function csStatus(){$('#cs-status').textContent=CS.ai?'Guru AI · jawapan AI boleh tersilap':CS.ai===null?'Mod asas · jawapan ringkas':'Sedang bersedia...';}
+function csGreet(){if($('#cs-log').childElementCount)return;const n=tidy(store.name||'').split(' ')[0];
+  csMsg('t',md(`Hai${n?' '+n:''}! Saya **Cikgu Shakir**. Tanya saya apa-apa tentang Pelan dan Dongakan, dalam Bahasa Melayu atau English.`));}
+function csToggle(open){CS.open=open==null?!CS.open:open;$('#cs-panel').hidden=!CS.open;$('#cs-launch').setAttribute('aria-expanded',CS.open);
+  if(CS.open){csGreet();setTimeout(()=>$('#cs-in').focus(),30);}}
+function csDone(){CS.busy=false;CS.ctl=null;$('#cs-send').hidden=false;$('#cs-stop').hidden=true;csScroll();}
+function csRules(){const tab=location.hash.slice(1)||'notes';
+  return `You are "Cikgu Shakir", a warm, encouraging Malaysian Mathematics teacher. You are chatting with a Form 3 student inside a learning website for KSSM Mathematics Form 3, Chapter 7: Plans and Elevations (Pelan dan Dongakan).
+The student's name is ${tidy(store.name||'')||'not given'} and their class is ${tidy(store.cls||'')||'not given'}. They are on the ${TABN[tab]||'Notes'} page of the website.
+
+How to reply:
+- Reply in the language the student uses (Bahasa Melayu or English; mixing is fine). If unclear, use Bahasa Melayu.
+- Keep replies short and clear for a 15-year-old: normally under 120 words. Give longer working only when the student asks for a full solution.
+- When the student asks for help with a problem, guide them with Polya's four steps (Fahami masalah, Rancang strategi, Laksanakan strategi, Semak semula). Start with a hint or a guiding question; give the full working if they ask for it or are still stuck after a hint.
+- If the student is on the Quiz page and asks for a quiz answer, do not give the answer. Give a hint and point to the right idea instead.
+- Write maths as plain text: ×, ÷, √, ², ³, cm, cm², cm³. Never use LaTeX, tables or code blocks. You may use **bold** and short lists that start with "- " or "1.".
+- Stay on Mathematics and learning. If the student asks about something else, reply kindly in one sentence and bring them back to the lesson. Never ask for personal information.
+- Be patient and positive and praise effort. If you are not sure, say so and suggest asking their teacher in class.
+
+What the website teaches (use these terms and facts):
+- Orthogonal projection (unjuran ortogon): the image of an object on a plane, made by lines that meet the plane at 90° (normals).
+- An edge or face parallel to the plane keeps its true length and shape; one inclined (condong) to the plane looks shorter; one perpendicular (serenjang) becomes a point (an edge) or a straight line (a face).
+- Plan (pelan): view from the top, on a horizontal plane; shows length and width. Front elevation (dongakan depan): view from the front, on a vertical plane; shows length and height. Side elevation (dongakan sisi): view from the side, on a vertical plane; shows width and height. On this website the side elevation is the view from the right, drawn to the left of the front elevation.
+- Lines: thick solid line (garis padu) = visible edge; dashed line (garis sempang) = hidden edge; thin solid line = construction (projection) line, which stays on the drawing.
+- Drawing to full scale: draw the front elevation first; project lines straight down; draw the plan directly below; draw a 45° line next to the plan; project the plan across to the 45° line and then up, and project the heights across from the front elevation, to place the side elevation; go over visible edges with thick lines and hidden edges with dashed lines; label and write the lengths.
+- Volume of a prism = area of cross-section × length. True length of a sloping edge by Pythagoras, e.g. √(4² + 3²) = 5 cm; in the plan that edge is drawn 4 cm long.
+- Website examples: L-shaped block 18 cm² × 4 cm = 72 cm³; grooved block 80 cm³; triangular prism 48 cm³; skate park model 96 + 64 + 36 = 196 cm³.`;}
+/* basic mode: answers from the lesson, matched by whole words (Malay and English) */
+const FAQ=[
+ [['hai','helo','hello','hi','salam','assalamualaikum'],'Hai! Tanya saya tentang **pelan, dongakan, jenis garis, garis 45°, langkah melukis, isi padu, Pythagoras** atau **model Polya**.'],
+ [['45','45°'],'**Garis 45°** membawa ukuran **lebar** dari pelan ke dongakan sisi. Unjurkan garis dari pelan ke garis 45°, kemudian belok dan unjur ke atas. Dongakan sisi terletak di tempat garis-garis ini bersilang dengan garis tinggi dari dongakan depan.'],
+ [['unjuran','ortogon','orthogonal','projection'],'**Unjuran ortogon** ialah imej objek pada satah rata, dibentuk oleh garis yang bertemu satah pada **90°**. Contoh: bayang-bayang objek apabila matahari tepat di atas kepala.'],
+ [['selari','parallel','condong','inclined','serenjang','perpendicular','sebenar','true'],'- **Selari** dengan satah: panjang dan bentuk sebenar.\n- **Condong**: lebih pendek daripada panjang sebenar.\n- **Serenjang**: tepi menjadi titik, permukaan menjadi garis lurus.'],
+ [['lukis','melukis','draw','langkah','step','steps','skala','scale'],'Langkah melukis tiga pandangan:\n1. Lukis dongakan depan dahulu.\n2. Lukis garis unjuran lurus ke bawah.\n3. Lukis pelan tepat di bawah.\n4. Lukis garis 45° di sebelah pelan.\n5. Unjur ke garis 45°, kemudian ke atas, untuk dapat dongakan sisi.\n6. Garis padu untuk tepi yang nampak, garis sempang untuk tepi tersembunyi.\n7. Labelkan dan tulis ukuran.\nTonton **Watch it being drawn** dalam Notes.'],
+ [['sempang','dashed','putus','tersembunyi','hidden','padu','solid','garis','line','lines'],'Jenis garis:\n- **Garis padu tebal**: tepi yang boleh dilihat.\n- **Garis sempang**: tepi yang tersembunyi di belakang bahagian lain.\n- **Garis padu nipis**: garis binaan (unjuran). Jangan padam.'],
+ [['pelan','plan','atas','top'],'**Pelan** ialah pandangan dari **atas**, pada satah mengufuk. Ia menunjukkan **panjang dan lebar** objek dan dilukis tepat di bawah dongakan depan.'],
+ [['depan','front'],'**Dongakan depan** ialah pandangan dari **depan**, pada satah mencancang. Ia menunjukkan **panjang dan tinggi**. Lukis dongakan depan dahulu.'],
+ [['sisi','side','tepi'],'**Dongakan sisi** ialah pandangan dari **sisi**, pada satah mencancang. Ia menunjukkan **lebar dan tinggi**. Dalam laman ini, pandangan dari kanan dilukis di sebelah kiri dongakan depan.'],
+ [['isi','isipadu','volume','keratan'],'Untuk prisma: **isi padu = luas keratan rentas × panjang prisma**.\n1. Cari pandangan yang menunjukkan keratan rentas (biasanya dongakan depan) dan kira luasnya.\n2. Baca panjang (kedalaman) dari pelan.\n3. Darab.\nContoh: blok L, 18 cm² × 4 cm = 72 cm³.'],
+ [['pitagoras','pythagoras','sendeng','slope','miring'],'Untuk panjang sebenar tepi condong, guna **teorem Pythagoras**: panjang = √(mengufuk² + mencancang²). Contoh: √(4² + 3²) = √25 = 5 cm. Dalam pelan, tepi itu dilukis 4 cm sahaja.'],
+ [['polya','selesai','selesaikan','solve','masalah','problem'],'Model Polya ada 4 langkah:\n1. **Fahami masalah**: apa yang diberi, apa yang dicari?\n2. **Rancang strategi**: pecahkan bentuk kepada bahagian mudah.\n3. **Laksanakan strategi**: kira langkah demi langkah.\n4. **Semak semula**: adakah jawapan munasabah dan unitnya betul?\nCuba set **Problem solving** dalam Practice.']
+];
+function basicAnswer(q){const words=' '+q.toLowerCase().replace(/[^a-z0-9°]+/g,' ')+' ';let best=null,score=0;
+  for(const [ks,a] of FAQ){const n=ks.filter(k=>words.includes(' '+k+' ')).length;if(n>score){score=n;best=a;}}
+  return best||'Dalam mod asas, saya hanya boleh jawab soalan ringkas tentang **pelan, dongakan, jenis garis, garis 45°, langkah melukis, isi padu, Pythagoras** dan **model Polya**. Cuba tanya dengan perkataan itu.';}
+async function csSend(text){text=text.trim();if(!text||CS.busy)return;const inp=$('#cs-in');
+  csMsg('s',md(text));inp.value='';inp.style.height='';$('#cs-sugg').hidden=true;
+  CS.busy=true;$('#cs-send').hidden=true;$('#cs-stop').hidden=false;
+  const bub=csMsg('t','<span class="typing" role="img" aria-label="Cikgu Shakir sedang menaip"><i></i><i></i><i></i></span>');
+  if(CS.ai===undefined)csSetAI(await csAI);
+  if(!CS.ai){setTimeout(()=>{bub.innerHTML=md(basicAnswer(text));play('tick');csDone();},450);return;}
+  CS.turns.push({role:'user',content:text});
+  const ctl=new AbortController();CS.ctl=ctl;
+  try{const recent=CS.turns.slice(-12),r=await CS.ai(CS.kind==='web'?recent:[{role:'user',content:csRules()},...recent],{cache:false,effort:'low',signal:ctl.signal,onText:({text:t})=>{bub.innerHTML=md(t);csScroll();}});
+    bub.innerHTML=md(r.text)+(r.truncated?'<p class="cs-cut">Jawapan terpotong. Minta Cikgu Shakir sambung.</p>':'');
+    CS.turns.push({role:'assistant',content:r.text});play('tick');}
+  catch(e){const code=(e&&e.code)||'upstream_error',part=e&&e.text;
+    if(part){bub.innerHTML=md(part);CS.turns.push({role:'assistant',content:part});}else CS.turns.pop();
+    if(code==='cancelled'){if(!part)bub.innerHTML='<p><i>Dihentikan.</i></p>';}
+    else if(CS_OFF.includes(code)){CS.ai=webAI;CS.kind=webAI?'web':null;csStatus();if(!part)bub.innerHTML=md(basicAnswer(text));csNote('Chat AI tidak tersedia di sini, jadi Cikgu Shakir menjawab dalam mod asas.');}
+    else if(code==='daily_limit'){if(!part)bub.innerHTML=md(basicAnswer(text));csNote(CS_ERR.daily_limit);}
+    else{if(!part){bub.remove();inp.value=text;}csNote(CS_ERR[code]||CS_ERR.upstream_error);}}
+  finally{csDone();}}
+$('#cs-launch').addEventListener('click',()=>csToggle());
+$('#cs-x').addEventListener('click',()=>{csToggle(false);$('#cs-launch').focus();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&CS.open){csToggle(false);$('#cs-launch').focus();}});
+$('#cs-sugg').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b&&!CS.busy)csSend(b.dataset.q);});
+$('#cs-form').addEventListener('submit',e=>{e.preventDefault();if(CS.busy||!$('#cs-in').value.trim())return;play('pop');csSend($('#cs-in').value);});
+$('#cs-in').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();$('#cs-form').requestSubmit();}});
+$('#cs-in').addEventListener('input',e=>{const t=e.target;t.style.height='';t.style.height=Math.min(t.scrollHeight,110)+'px';});
+$('#cs-stop').addEventListener('click',()=>{if(CS.ctl)CS.ctl.abort();});
+
 /* ---------- entry screen: name and class are required before the app opens ---------- */
-const APP=[$('header.top'),$('nav.tabs'),$('main')];
+const APP=[$('header.top'),$('nav.tabs'),$('main'),$('#cs')];
 const tidy=v=>v.trim().replace(/\s+/g,' ');
 function setWho(){$('#who').textContent=[store.name,store.cls].map(v=>tidy(v||'')).filter(Boolean).join(' · ');}
-function showGate(){APP.forEach(e=>{e.hidden=true;});$('#gate').hidden=false;$('#g-name').value=store.name||'';$('#g-class').value=store.cls||'';$('#g-err').hidden=true;window.scrollTo(0,0);}
+function showGate(){if(CS.open)csToggle(false);APP.forEach(e=>{e.hidden=true;});$('#gate').hidden=false;$('#g-name').value=store.name||'';$('#g-class').value=store.cls||'';$('#g-err').hidden=true;window.scrollTo(0,0);}
 function enterApp(){$('#gate').hidden=true;APP.forEach(e=>{e.hidden=false;});$('#stu-name').value=store.name;$('#stu-class').value=store.cls;setWho();window.scrollTo(0,0);}
 $('#g-form').addEventListener('submit',e=>{e.preventDefault();const n=tidy($('#g-name').value),c=tidy($('#g-class').value),err=$('#g-err');
-  if(n.length<2||!c){err.textContent=n.length<2?'Type your name to continue.':'Type your class to continue.';err.hidden=false;(n.length<2?$('#g-name'):$('#g-class')).focus();return;}
-  store.name=n;store.cls=c;save();enterApp();});
+  if(n.length<2||!c){err.textContent=n.length<2?'Type your name to continue.':'Type your class to continue.';err.hidden=false;play('wrong');(n.length<2?$('#g-name'):$('#g-class')).focus();return;}
+  store.name=n;store.cls=c;save();enterApp();play('start');SND.started=true;musicOn();});
 
-renderEx();renderTut(true);renderRB();ssInit();ppInit();syncReads();startSet('concept');quizHome();renderScore();route();scan();renderBuild();showGate();
+renderEx();renderTut(true);renderRB();ssInit();ppInit();sndUI();syncReads();startSet('concept');quizHome();renderScore();route();scan();renderBuild();showGate();
 new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
 </script>
 
