@@ -258,6 +258,13 @@ input[type=text]{border:2.5px solid var(--edge);border-radius:12px}
 .snd svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .snd button[aria-pressed="true"] .off,.snd button[aria-pressed="false"] .on{display:none}
 main .wrap{padding-bottom:96px}
+.lvl{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--on-bright);background:var(--mint);border:2px solid var(--edge);border-radius:999px;padding:2px 10px}
+.lvl.hard{background:var(--pink)}
+.dims{display:flex;flex-wrap:wrap;gap:8px}
+.dim{display:flex;flex-direction:column;border:2.5px solid var(--edge);border-radius:12px;padding:5px 12px;background:var(--sheet);box-shadow:0 3px 0 var(--edge);min-width:0}
+.dim small{font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.dim b{font:700 18px var(--display);font-variant-numeric:tabular-nums}
+.dim.extra b{font:600 14px var(--body)}
 details.polya{border:2.5px solid var(--edge);border-radius:16px;box-shadow:0 4px 0 var(--edge);padding:12px 16px;background:var(--sheet)}
 details.polya summary{font:700 18px var(--display);cursor:pointer}
 details.polya[open] summary{margin-bottom:10px}
@@ -281,6 +288,7 @@ input[type=range]{accent-color:var(--accent);flex:1;min-width:160px;max-width:32
     <span class="eyebrow">Mathematics Form 3 · Chapter 7</span>
     <h1 id="g-title">Plans and Elevations</h1>
     <p class="lede">Ready to see shapes from every side? First, tell us your name and your class.</p>
+    <p class="muted" id="g-sheet" hidden>Your name, class and scores will be sent to your teacher.</p>
     <div class="field"><label for="g-name">Your name</label><input type="text" id="g-name" autocomplete="off" maxlength="60" placeholder="Full name"></div>
     <div class="field"><label for="g-class">Your class</label><input type="text" id="g-class" autocomplete="off" maxlength="30" placeholder="Example: 3 Amanah"></div>
     <div class="fb no" id="g-err" role="alert" hidden></div>
@@ -552,18 +560,20 @@ input[type=range]{accent-color:var(--accent);flex:1;min-width:160px;max-width:32
     <h2>Practice</h2>
     <p class="muted">No timer. You get the answer and the reason straight away.</p>
     <div class="seg" id="p-sets" role="group" aria-label="Practice type">
-      <button type="button" class="chip" data-set="concept">Key ideas</button>
-      <button type="button" class="chip" data-set="views">Read the views</button>
-      <button type="button" class="chip" data-set="draw">Drawing board</button>
-      <button type="button" class="chip" data-set="polya">Problem solving</button>
+      <button type="button" class="chip" data-set="concept">Key ideas · 20</button>
+      <button type="button" class="chip" data-set="views">Read the views · 10</button>
+      <button type="button" class="chip" data-set="draw">Drawing board · 10</button>
+      <button type="button" class="chip" data-set="polya">Problem solving · 5</button>
     </div>
     <p class="meta" id="p-meta"></p>
     <div id="p-q" class="view" style="gap:14px"></div>
     <div id="p-draw" class="view" style="gap:14px" hidden>
+      <div class="row"><span class="lvl" id="d-lvl"></span></div>
       <p class="qtext" id="d-prompt"></p>
+      <div class="dims" id="d-dims"></div>
       <div class="two">
-        <figure><div class="panel" id="d-iso"></div><figcaption>Each unit on the solid is 1 cm.</figcaption></figure>
-        <figure><div class="panel" id="board"></div><figcaption>Tap one dot, then another, to draw a line. 1 square = 1 cm.</figcaption></figure>
+        <figure><div class="panel" id="d-iso"></div><figcaption>Drag the solid, or press Top, Front and Side, to check your view.</figcaption></figure>
+        <figure><div class="panel" id="board"></div><figcaption>Tap one dot, then another, to draw a line. 1 square = 1 unit.</figcaption></figure>
       </div>
       <div class="row">
         <button type="button" class="chip" id="d-solid" aria-pressed="true">Solid line</button>
@@ -591,7 +601,7 @@ input[type=range]{accent-color:var(--accent);flex:1;min-width:160px;max-width:32
     <div class="tiles" id="s-tiles"></div>
     <div class="row"><button type="button" class="btn ghost" id="s-copy">Copy my results for Google Sheets</button><span class="muted" id="s-copy-msg"></span></div>
     <input type="text" id="s-copy-out" readonly hidden aria-label="Results row">
-    <p class="muted">Scores are saved in this browser on this device only. The copy button puts one row on the clipboard: name, class, date, best quiz %, latest quiz mark, quizzes taken, practice correct, practice attempted, notes understood.</p>
+    <p class="muted"><span id="s-where">Scores are saved in this browser on this device only.</span> The copy button puts one row on the clipboard: name, class, date, best quiz %, latest quiz mark, quizzes taken, practice correct, practice attempted, notes understood.</p>
   </article>
   <article class="sheet">
     <h3>Practice accuracy</h3>
@@ -849,12 +859,18 @@ function numq(host,q,onDone){
 
 /* ---------- practice ---------- */
 let P={set:'concept',list:[],i:0,a:0,c:0};
-const record=(set,ok)=>{store.practice[set].a++;if(ok)store.practice[set].c++;P.a++;if(ok)P.c++;save();pMeta();renderScore();};
-const pMeta=()=>{$('#p-meta').textContent=P.a?`This session: ${P.c} of ${P.a} correct`:'This session: no answers yet';};
-function startSet(k){P={set:k,list:k==='concept'?shuffle(CONCEPTS):k==='views'?shuffle([...matchQs(),...NUMS]):k==='polya'?PQS.slice():shuffle(drawTasks()),i:0,a:0,c:0};
+const record=(set,ok)=>{store.practice[set].a++;if(ok)store.practice[set].c++;P.a++;if(ok)P.c++;save();pMeta();renderScore();sheetDirty=true;};
+const pMeta=()=>{const N=P.list.length;$('#p-meta').textContent=!N?'':P.i>=N?`Set complete · ${P.c} of ${N} correct`:`Question ${P.i+1} of ${N} · ${P.c} correct so far`;};
+/* each practice set has a fixed size: 20 key ideas, 10 read-the-views (6 match + 4 working), 10 drawings (5 basic then 5 complex), 5 problems */
+function startSet(k){P={set:k,list:k==='concept'?shuffle(CONCEPTS).slice(0,20):k==='views'?shuffle([...shuffle(matchQs()).slice(0,6),...shuffle(NUMS).slice(0,4)]):k==='polya'?PQS.slice(0,5):drawTasks(),i:0,a:0,c:0};
   $$('#p-sets .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.set===k));pMeta();showP();}
-function showP(){const nx=$('#p-next');nx.hidden=true;const item=P.list[P.i%P.list.length],isDraw=P.set==='draw';
-  $('#p-q').hidden=isDraw;$('#p-draw').hidden=!isDraw;nx.textContent=isDraw?'Next drawing':'Next question';
+function pDone(){const N=P.list.length,pct=Math.round(P.c/N*100);toSheet('Practice set',SETN[P.set],P.c,N);
+  $('#p-draw').hidden=true;$('#p-q').hidden=false;$('#p-next').hidden=true;pMeta();
+  const msg=pct>=85?'Excellent! You have mastered this set.':pct>=70?'Good work. Look again at the ones you missed.':pct>=50?'Getting there. Read the notes again, then try the set once more.':'Go back to the notes, then try this set again.';
+  $('#p-q').innerHTML=`<h3>Set complete!</h3><div class="row" style="align-items:baseline"><span class="big">${P.c}/${N}</span><span class="meta">${pct}% correct</span></div><p>${msg}</p><div class="row"><button type="button" class="btn" id="p-again">Try this set again</button></div><p class="muted">Or choose another practice type above.</p>`;
+  $('#p-again').addEventListener('click',()=>startSet(P.set));if(pct>=70)party();else play('done');}
+function showP(){const nx=$('#p-next');nx.hidden=true;if(P.i>=P.list.length){pDone();return;}pMeta();const item=P.list[P.i],isDraw=P.set==='draw';
+  $('#p-q').hidden=isDraw;$('#p-draw').hidden=!isDraw;nx.textContent=P.i===P.list.length-1?'See my result':isDraw?'Next drawing':'Next question';
   if(isDraw){startDraw(item);nx.hidden=false;return;}
   const host=$('#p-q');
   if(item.n!=null){numq(host,item,ok=>{record(P.set,ok);nx.hidden=false;});if(item.steps)host.insertAdjacentHTML('beforeend',polyaHTML(item));}
@@ -865,7 +881,21 @@ $('#p-next').addEventListener('click',()=>{P.i++;showP();$('#v-practice').scroll
 /* ---------- drawing board ---------- */
 const GW=8,GH=7,GU=32,GP=16;
 let B={task:null,segs:[],start:null,dash:false,scored:false};
-const drawTasks=()=>{const t=[];SOLIDS.forEach(s=>VK.forEach(k=>{if(!s[k].s.some(x=>x.t==='circle'))t.push({s,k});}));return t;};
+/* drawing board: 5 basic shapes, then 5 complex shapes, each with its measurements in units (1 unit = 1 square) */
+S('pyr').plan={w:4,h:4,s:[rect(4,4),ln(0,0,4,4),ln(0,4,4,0)]};
+S('ramp4').front={w:4,h:3,s:[{t:'poly',pts:[[0,0],[4,0],[0,3]]}]};
+const drawTasks=()=>[
+ ['Basic','cuboid','plan',[['Length',6],['Width',4],['Height',3]]],
+ ['Basic','roof','front',[['Length',6],['Width',4],['Height',4]],'The top edge is in the middle of the length.'],
+ ['Basic','roof','plan',[['Length',6],['Width',4],['Height',4]],'The top edge is in the middle of the length.'],
+ ['Basic','ramp4','front',[['Length',4],['Width',3],['Height',3]],'The tall end is on the left.'],
+ ['Basic','pyr','plan',[['Base length',4],['Base width',4],['Height',5]],'The top point is above the centre of the base.'],
+ ['Complex','lblock','front',[['Length',6],['Width',4],['Height',5]],'The bottom part is 2 units high. The tall part on the left is 2 units long.'],
+ ['Complex','groove','side',[['Length',6],['Width',4],['Height',4]],'The groove runs from front to back. It is 2 units wide and 2 units deep, in the middle of the top.'],
+ ['Complex','pq1','front',[['Length',6],['Width',4],['Height',3]],'There are 3 steps. Each step is 2 units across and 1 unit up, rising to the left.'],
+ ['Complex','pq3','plan',[['Length',6],['Width',5],['Height',6]],'The top bar is 6 units long and 2 units high. The stem under it is 2 units long and 4 units high, in the middle.'],
+ ['Complex','park','plan',[['Length',8],['Width',6],['Height',6]],'Base: 8 × 6 × 2 units high. Tower: 4 × 4, standing 4 units on the back left of the base. Ramp: on the right half, 3 units high at its left end.']
+].map(([lv,id,k,dims,extra])=>({lv,s:S(id),k,dims,extra}));
 const gcd=(a,b)=>b?gcd(b,a%b):a;
 function canon(segs,ignoreStyle){if(!segs.length)return '';
   const mx=Math.min(...segs.flatMap(s=>[s[0],s[2]])),my=Math.min(...segs.flatMap(s=>[s[1],s[3]])),G={};
@@ -884,7 +914,9 @@ function renderBoard(){const X=i=>GP+i*GU,w=GW*GU+GP*2,h=GH*GU+GP*2;let o='';
     o+=`<circle class="${st?'pend':'pt'}" cx="${X(i)}" cy="${X(j)}" r="${st?5:1.8}"/><circle class="hit" data-p="${i},${j}" cx="${X(i)}" cy="${X(j)}" r="13"/>`;}
   $('#board').innerHTML=`<svg class="dwg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Drawing grid">${o}</svg>`;}
 function startDraw(t){B={task:t,segs:[],start:null,dash:false,scored:false};setStyle(false);
-  $('#d-prompt').innerHTML=`Draw the <b>${VN[t.k]}</b> of this ${t.s.name.toLowerCase()}, as seen from ${VDIR[t.k]}. Use a dashed line for any hidden edge.`;
+  const lv=$('#d-lvl');lv.textContent=(t.lv||'Basic')+' shape';lv.className='lvl'+(t.lv==='Complex'?' hard':'');
+  $('#d-prompt').innerHTML=`Draw the <b>${VN[t.k]}</b> of this ${t.s.name.toLowerCase()}, as seen from ${VDIR[t.k]}. Use the measurements below: 1 unit = 1 square on the grid.${t.k==='plan'?' Put the front of the solid at the bottom of your plan.':''} Use a dashed line for any hidden edge.`;
+  $('#d-dims').innerHTML=(t.dims||[]).map(([n,v])=>`<div class="dim"><small>${n}</small><b>${v} units</b></div>`).join('')+(t.extra?`<div class="dim extra"><small>Details</small><b>${t.extra}</b></div>`:'');
   $('#d-iso').innerHTML=v3(t.s);$('#d-fb').hidden=true;renderBoard();}
 function setStyle(d){B.dash=d;$('#d-solid').setAttribute('aria-pressed',!d);$('#d-dash').setAttribute('aria-pressed',d);}
 $('#board').addEventListener('click',e=>{const c=e.target.closest('[data-p]');if(!c)return;play(B.start?'line':'dot');const p=c.dataset.p.split(',').map(Number);
@@ -898,7 +930,7 @@ $('#d-check').addEventListener('click',()=>{const fb=$('#d-fb'),t=B.task,v=t.s[t
   if(!B.scored){B.scored=true;record('draw',ok);}
   if(ok){fb.className='fb ok';fb.innerHTML=`<b>Correct.</b> ${t.s.note}`;}
   else if(canon(mine,true)===canon(ans,true)){fb.className='fb no';fb.innerHTML='<b>Nearly.</b> The lines are in the right places. Check which edges are visible (solid) and which are hidden (dashed).';}
-  else{fb.className='fb no';fb.innerHTML=`<b>Not yet.</b> The outline should be ${v.w} cm across and ${v.h} cm ${t.k==='plan'?'deep':'high'}. Check for edges inside the outline, then try again. Correct drawing:<div class="panel" style="margin-top:8px;display:inline-flex">${viewSVG(v,14)}</div>`;}});
+  else{fb.className='fb no';fb.innerHTML=`<b>Not yet.</b> The outline should be ${v.w} units across and ${v.h} units ${t.k==='plan'?'deep':'high'}. Check for edges inside the outline, then try again. Correct drawing:<div class="panel" style="margin-top:8px;display:inline-flex">${viewSVG(v,14)}</div>`;}});
 
 /* ---------- quiz ---------- */
 const QN=12;let Q=null,qTimer=null;
@@ -912,7 +944,7 @@ function quizQ(){const c=$('#q-card'),last=Q.i===QN-1;
   mcq($('#q-host'),Q.qs[Q.i],{practice:false,onPick:i=>{Q.ans[Q.i]=i;$('#q-next').disabled=false;}});
   $('#q-next').addEventListener('click',()=>{Q.i++;if(Q.i<QN)quizQ();else quizEnd();$('#v-quiz').scrollIntoView({block:'start'});});}
 function quizEnd(){clearInterval(qTimer);const secs=Math.round((Date.now()-Q.t0)/1000),score=Q.ans.filter(a=>a===0).length,pct=Math.round(score/QN*100);
-  store.quizzes.push({d:Date.now(),score,total:QN,secs});save();renderScore();if(pct>=70)party();else play('done');
+  store.quizzes.push({d:Date.now(),score,total:QN,secs});save();renderScore();toSheet('Quiz','Chapter 7 quiz',score,QN,secs);if(pct>=70)party();else play('done');
   const msg=pct>=85?'Excellent! You have mastered this chapter.':pct>=70?'Good work. Review the questions you missed.':pct>=50?'Getting there. Go through the notes again, then retry.':'Read the notes and try the practice before the next attempt.';
   $('#q-card').innerHTML=`<h2>Your result</h2><div class="row" style="align-items:baseline"><span class="big">${score}/${QN}</span><span class="meta">${pct}% · time ${fmt(secs)}</span></div><p>${msg}</p><div class="row"><button type="button" class="btn" id="q-again">Try another quiz</button><a class="btn ghost" href="#score" style="text-decoration:none">See my scores</a></div><h3>Review</h3><div class="review">${Q.qs.map((q,i)=>{const ok=Q.ans[i]===0;
     return `<div><span class="tag ${ok?'ok':'no'}">Q${i+1} · ${ok?'correct':'wrong'}</span><p class="qtext">${q.q}</p>${figHTML(q)}${ok?'':`<p class="ans">Your answer: ${q.o[Q.ans[i]]}</p>`}<p class="ans">Correct answer: ${q.o[0]}</p><p class="muted">${q.why}</p></div>`;}).join('')}</div>`;
@@ -932,7 +964,7 @@ $('#s-reset').addEventListener('click',()=>{$('#s-confirm').hidden=false;});
 $('#s-no').addEventListener('click',()=>{$('#s-confirm').hidden=true;});
 $('#s-yes').addEventListener('click',()=>{store=blank();save();$('#s-confirm').hidden=true;syncReads();renderScore();quizHome();showGate();});
 const syncReads=()=>$$('[data-read]').forEach(c=>c.checked=!!store.read[c.dataset.read]);
-$$('[data-read]').forEach(c=>c.addEventListener('change',()=>{store.read[c.dataset.read]=c.checked;save();renderScore();}));
+$$('[data-read]').forEach(c=>c.addEventListener('change',()=>{store.read[c.dataset.read]=c.checked;save();renderScore();sheetDirty=true;}));
 
 /* ---------- tabs ---------- */
 const TABS=['notes','practice','quiz','score'];
@@ -1252,6 +1284,26 @@ $('#cs-in').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.i
 $('#cs-in').addEventListener('input',e=>{const t=e.target;t.style.height='';t.style.height=Math.min(t.scrollHeight,110)+'px';});
 $('#cs-stop').addEventListener('click',()=>{if(CS.ctl)CS.ctl.abort();});
 
+/* ---------- Google Sheet: send each student's name, class, scores and progress to the teacher's sheet (GitHub Pages only) ---------- */
+/* Paste the Apps Script Web app address (ends with /exec) between the quotes. Leave it empty to send nothing. */
+const SHEET_URL='https://script.google.com/macros/s/AKfycbzNmVKO2W1RmM-TWUfeQ1dgYhHFHE5l8OwGq7qeee6DwyWpzwXIY8yFWkavfRwEgiwv/exec';
+const SHEET_TOKEN='pe-ch7-2026'; // must match TOKEN in the Apps Script
+const SETN={concept:'Key ideas',views:'Read the views',draw:'Drawing board',polya:'Problem solving'};
+let sheetDirty=false;
+function sheetSnapshot(){const qs=store.quizzes,l=qs[qs.length-1],pr=store.practice,vals=Object.values(pr),
+    pa=vals.reduce((t,p)=>t+p.a,0),pc=vals.reduce((t,p)=>t+p.c,0);
+  return {bestQuiz:qs.length?Math.max(...qs.map(q=>Math.round(q.score/q.total*100))):'',latestQuiz:l?l.score+'/'+l.total:'',quizzes:qs.length,
+    prac:Object.fromEntries(Object.keys(SETN).map(k=>[k,pr[k]?pr[k].c+'/'+pr[k].a:'0/0'])),pracPct:pa?Math.round(pc/pa*100):'',
+    notes:READS.filter(r=>store.read[r]).length+'/'+READS.length};}
+const SHEET_ON=!!SHEET_URL&&!window.claude; // the Claude page cannot reach Google, so it never claims to send
+function toSheet(event,detail,score,total,secs){if(!SHEET_ON||!store.name)return;sheetDirty=false;
+  const body=JSON.stringify(Object.assign({token:SHEET_TOKEN,name:store.name,cls:store.cls,event,detail:detail||'',
+    score:score==null?'':score,total:total==null?'':total,pct:total?Math.round(score/total*100):'',time:secs==null?'':fmt(secs)},sheetSnapshot()));
+  try{fetch(SHEET_URL,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body}).catch(()=>{});}catch(e){}}
+/* practice answers and ticked notes are sent together when the student leaves or switches away from the page */
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&sheetDirty)toSheet('Progress update');});
+if(SHEET_ON){$('#g-sheet').hidden=false;$('#s-where').textContent='Scores are saved in this browser and sent to your teacher.';}
+
 /* ---------- entry screen: name and class are required before the app opens ---------- */
 const APP=[$('header.top'),$('nav.tabs'),$('main'),$('#cs')];
 const tidy=v=>v.trim().replace(/\s+/g,' ');
@@ -1260,7 +1312,7 @@ function showGate(){if(CS.open)csToggle(false);APP.forEach(e=>{e.hidden=true;});
 function enterApp(){$('#gate').hidden=true;APP.forEach(e=>{e.hidden=false;});$('#stu-name').value=store.name;$('#stu-class').value=store.cls;setWho();window.scrollTo(0,0);}
 $('#g-form').addEventListener('submit',e=>{e.preventDefault();const n=tidy($('#g-name').value),c=tidy($('#g-class').value),err=$('#g-err');
   if(n.length<2||!c){err.textContent=n.length<2?'Type your name to continue.':'Type your class to continue.';err.hidden=false;play('wrong');(n.length<2?$('#g-name'):$('#g-class')).focus();return;}
-  store.name=n;store.cls=c;save();enterApp();play('start');SND.started=true;musicOn();});
+  store.name=n;store.cls=c;save();enterApp();play('start');SND.started=true;musicOn();toSheet('Started');});
 
 renderEx();renderTut(true);renderRB();ssInit();ppInit();sndUI();syncReads();startSet('concept');quizHome();renderScore();route();scan();renderBuild();showGate();
 new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
