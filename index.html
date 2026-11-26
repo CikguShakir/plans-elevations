@@ -212,6 +212,15 @@ article:nth-child(4n+2) .sec-no{background:var(--pink)}article:nth-child(4n+3) .
 .opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
 .fb{border-width:2.5px;border-radius:14px}
 input[type=text]{border:2.5px solid var(--edge);border-radius:12px}
+.rv-set{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rv-set legend,.rv-lbl{font-weight:700;padding:0;margin-bottom:6px}
+.rv-stars{display:flex;flex-wrap:wrap;gap:8px}
+.rv-star{font-size:30px;line-height:1;width:52px;height:52px;border-radius:14px;border:2.5px solid var(--edge);background:var(--sheet);color:var(--rule);cursor:pointer;box-shadow:0 3px 0 var(--edge)}
+.rv-star.on{background:var(--yellow);color:var(--on-bright)}
+.rv-star:hover{transform:translateY(-2px)}
+.rv-star:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#rv-text{font:16px var(--body);color:var(--ink);background:var(--sheet);border:2.5px solid var(--edge);border-radius:12px;padding:10px 12px;width:100%;max-width:65ch;resize:vertical}
+@media (prefers-reduced-motion:reduce){.rv-star:hover{transform:none}}
 .bgrid button{border:2.5px solid var(--edge);border-radius:10px;box-shadow:0 3px 0 var(--edge)}
 .bgrid button.on{background:var(--yellow);color:var(--on-bright)}
 .bar{height:14px;border:2px solid var(--edge);background:var(--sheet)}
@@ -611,6 +620,19 @@ input[type=range]{accent-color:var(--accent);flex:1;min-width:160px;max-width:32
     <h3>Quiz history</h3>
     <div class="scroll" id="s-hist"></div>
   </article>
+  <article class="sheet" id="rv">
+    <h3>Rate this website</h3>
+    <form id="rv-form" class="view" style="gap:12px">
+      <fieldset class="rv-set"><legend>How much did this website help you learn Plans and Elevations? (5 is very good)</legend>
+        <div class="rv-stars" id="rv-stars" role="radiogroup" aria-label="Rating from 1 to 5"></div>
+        <p class="muted" id="rv-label">Tap a star to choose your rating.</p>
+      </fieldset>
+      <label for="rv-text" class="rv-lbl">Your comment</label>
+      <textarea id="rv-text" rows="4" maxlength="500" placeholder="What did you like? What can be better?"></textarea>
+      <div class="row"><button type="submit" class="btn" id="rv-send">Send my review</button><span class="muted" id="rv-count">0 / 500</span></div>
+      <div class="fb" id="rv-fb" hidden></div>
+    </form>
+  </article>
   <div class="row">
     <button type="button" class="btn ghost" id="s-reset">Reset my progress</button>
     <span id="s-confirm" hidden class="row"><span>Erase all scores?</span><button type="button" class="btn" id="s-yes">Yes, erase</button><button type="button" class="btn ghost" id="s-no">Cancel</button></span>
@@ -705,7 +727,7 @@ $('#snd-fx').addEventListener('click',()=>{SND.fx=!SND.fx;sndSave();sndUI();play
 $('#snd-music').addEventListener('click',()=>{SND.music=!SND.music;sndSave();sndUI();if(SND.music){SND.started=true;musicOn();}else musicOff();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)musicOff();else if(SND.started)musicOn();});
 /* a sound for every button, tab and step; the ones that judge an answer play their own sound */
-document.addEventListener('click',e=>{const el=e.target.closest('button,a,summary');if(!el||el.disabled||el.closest('.opt,[type=submit],#d-check,#b-grid,.snd'))return;
+document.addEventListener('click',e=>{const el=e.target.closest('button,a,summary');if(!el||el.disabled||el.closest('.opt,[type=submit],#d-check,#b-grid,.snd,.rv-star'))return;
   play(el.closest('nav.tabs')?'tab':el.tagName==='SUMMARY'?'flip':'pop');},true);
 document.addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]'))play(e.target.checked?'ding':'tick');});
 
@@ -1296,13 +1318,29 @@ function sheetSnapshot(){const qs=store.quizzes,l=qs[qs.length-1],pr=store.pract
     prac:Object.fromEntries(Object.keys(SETN).map(k=>[k,pr[k]?pr[k].c+'/'+pr[k].a:'0/0'])),pracPct:pa?Math.round(pc/pa*100):'',
     notes:READS.filter(r=>store.read[r]).length+'/'+READS.length};}
 const SHEET_ON=!!SHEET_URL&&!window.claude; // the Claude page cannot reach Google, so it never claims to send
-function toSheet(event,detail,score,total,secs){if(!SHEET_ON||!store.name)return;sheetDirty=false;
+function toSheet(event,detail,score,total,secs,extra){if(!SHEET_ON||!store.name)return;sheetDirty=false;
   const body=JSON.stringify(Object.assign({token:SHEET_TOKEN,name:store.name,cls:store.cls,event,detail:detail||'',
-    score:score==null?'':score,total:total==null?'':total,pct:total?Math.round(score/total*100):'',time:secs==null?'':fmt(secs)},sheetSnapshot()));
+    score:score==null?'':score,total:total==null?'':total,pct:total?Math.round(score/total*100):'',time:secs==null?'':fmt(secs)},sheetSnapshot(),extra||{}));
   try{fetch(SHEET_URL,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body}).catch(()=>{});}catch(e){}}
 /* practice answers and ticked notes are sent together when the student leaves or switches away from the page */
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&sheetDirty)toSheet('Progress update');});
 if(SHEET_ON){$('#g-sheet').hidden=false;$('#s-where').textContent='Scores are saved in this browser and sent to your teacher.';}
+
+/* ---------- review: a 1 to 5 star rating and a comment, sent to the "Reviews" tab of the Google Sheet ---------- */
+const RVL=['','Very poor','Poor','OK','Good','Very good'];
+let rvPick=0;
+function rvStars(){$('#rv-stars').innerHTML=[1,2,3,4,5].map(n=>`<button type="button" class="rv-star${n<=rvPick?' on':''}" role="radio" aria-checked="${n===rvPick}" aria-label="${n} star${n>1?'s':''}, ${RVL[n]}" data-n="${n}">★</button>`).join('');
+  $('#rv-label').textContent=rvPick?`${rvPick} out of 5 · ${RVL[rvPick]}`:'Tap a star to choose your rating.';}
+$('#rv-stars').addEventListener('click',e=>{const b=e.target.closest('[data-n]');if(!b)return;rvPick=+b.dataset.n;rvStars();play('ding');});
+$('#rv-text').addEventListener('input',e=>{$('#rv-count').textContent=e.target.value.length+' / 500';});
+$('#rv-form').addEventListener('submit',e=>{e.preventDefault();const fb=$('#rv-fb'),txt=$('#rv-text').value.trim();fb.hidden=false;
+  if(!rvPick){fb.className='fb no';fb.innerHTML='<b>Choose a rating first.</b> Tap 1 to 5 stars.';play('wrong');return;}
+  store.review={rating:rvPick,comment:txt,at:Date.now()};save();
+  toSheet('Review','Rating '+rvPick+'/5',rvPick,5,null,{rating:rvPick,comment:txt});
+  fb.className='fb ok';fb.innerHTML=`<b>Thank you, ${store.name||'friend'}!</b> ${SHEET_ON?'Your review was sent to your teacher.':'Your review is saved in this browser. Reviews reach your teacher only from the class website.'} You can change it and send again.`;
+  $('#rv-send').textContent='Send again';if(rvPick>=4)party();else play('right');});
+if(store.review){rvPick=store.review.rating||0;$('#rv-text').value=store.review.comment||'';$('#rv-count').textContent=$('#rv-text').value.length+' / 500';$('#rv-send').textContent='Send again';}
+rvStars();
 
 /* ---------- entry screen: name and class are required before the app opens ---------- */
 const APP=[$('header.top'),$('nav.tabs'),$('main'),$('#cs')];
@@ -1317,6 +1355,7 @@ $('#g-form').addEventListener('submit',e=>{e.preventDefault();const n=tidy($('#g
 renderEx();renderTut(true);renderRB();ssInit();ppInit();sndUI();syncReads();startSet('concept');quizHome();renderScore();route();scan();renderBuild();showGate();
 new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
 </script>
+
 
 </body>
 </html>
